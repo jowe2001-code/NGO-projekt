@@ -26,6 +26,27 @@ public class Meny extends javax.swing.JFrame {
         this.inloggadAnvandare = inloggadAnvandare;
         initComponents();
         lblInloggadAnvandare.setText(inloggadAnvandare);
+        
+        try{
+            //hämta aid från användare
+            String sqlAid = "SELECT aid FROM anstalld WHERE epost = '" + inloggadAnvandare + "'";
+            String aid = idb.fetchSingle(sqlAid);
+            
+            //kolla om användaren är admin
+            String sqlAdmin = "SELECT aid FROM admin WHERE aid = " + aid;
+            String behorighetsniva = idb.fetchSingle(sqlAdmin);
+            
+            if(behorighetsniva.equals("1")){
+                lblRoll.setText("Administratör");
+            } else{
+                lblRoll.setText("Handläggare");
+            }
+            
+        }catch(InfException ex){
+            System.out.println(ex.getMessage());
+        }
+        
+        
     }
 
     /**
@@ -38,26 +59,58 @@ public class Meny extends javax.swing.JFrame {
     private void initComponents() {
 
         lblInloggadAnvandare = new javax.swing.JLabel();
+        btnMinaProjekt = new javax.swing.JButton();
+        btnPartners = new javax.swing.JButton();
+        btnPersonal = new javax.swing.JButton();
+        btnAndraUppgifter = new javax.swing.JButton();
+        lblRoll = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lblInloggadAnvandare.setText("jLabel1");
+
+        btnMinaProjekt.setText("Mina Projekt");
+
+        btnPartners.setText("Partners");
+
+        btnPersonal.setText("Personal");
+
+        btnAndraUppgifter.setText("Ändra uppgifter");
+
+        lblRoll.setText("jLabel1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(95, 95, 95)
-                .addComponent(lblInloggadAnvandare)
-                .addContainerGap(268, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblInloggadAnvandare)
+                    .addComponent(btnAndraUppgifter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnMinaProjekt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPartners, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPersonal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 237, Short.MAX_VALUE)
+                .addComponent(lblRoll)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(lblInloggadAnvandare)
-                .addContainerGap(244, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblInloggadAnvandare)
+                    .addComponent(lblRoll))
+                .addGap(18, 18, 18)
+                .addComponent(btnMinaProjekt)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPartners)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPersonal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAndraUppgifter)
+                .addContainerGap(150, Short.MAX_VALUE))
         );
 
         pack();
@@ -89,6 +142,11 @@ public class Meny extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAndraUppgifter;
+    private javax.swing.JButton btnMinaProjekt;
+    private javax.swing.JButton btnPartners;
+    private javax.swing.JButton btnPersonal;
     private javax.swing.JLabel lblInloggadAnvandare;
+    private javax.swing.JLabel lblRoll;
     // End of variables declaration//GEN-END:variables
 }

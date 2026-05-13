@@ -44,6 +44,7 @@ public class Inloggning extends javax.swing.JFrame {
         btnLoggain = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(51, 255, 51));
 
         lblEPost.setText("E-Post");
 
