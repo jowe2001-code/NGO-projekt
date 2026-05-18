@@ -70,6 +70,7 @@ public class Meny extends javax.swing.JFrame {
         lblInloggadAnvandare.setText("jLabel1");
 
         btnMinaProjekt.setText("Mina Projekt");
+        btnMinaProjekt.addActionListener(this::btnMinaProjektActionPerformed);
 
         btnPartners.setText("Partners");
 
@@ -115,6 +116,36 @@ public class Meny extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnMinaProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinaProjektActionPerformed
+        // TODO add your handling code here:
+        try {
+    // hämtar från sql
+    String sqlFraga = "SELECT projekt.projektnamn " +
+                      "FROM projekt " +
+                      "JOIN ans_proj ON projekt.pid = ans_proj.pid " +
+                      "JOIN anstalld ON ans_proj.aid = anstalld.aid " +
+                      "WHERE anstalld.epost = '" + inloggadAnvandare + "'";
+
+    // 2. Vi ber databasen hämta kolumn med alla projektnamn
+    java.util.ArrayList<String> projektLista = idb.fetchColumn(sqlFraga);
+
+    // 3. Vi kollar om vi fick något svar från databasen
+    if (projektLista != null && !projektLista.isEmpty()) {
+        //
+        String allaProjekt = String.join(", ", projektLista);
+        
+        //
+        javax.swing.JOptionPane.showMessageDialog(this, "Du är med i följande projekt: " + allaProjekt);
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Du är inte tilldelad några projekt för tillfället.");
+    }
+
+} catch (oru.inf.InfException ex) {
+    // felmeddelande
+    javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod: " + ex.getMessage());
+}
+    }//GEN-LAST:event_btnMinaProjektActionPerformed
 
     /**
      * @param args the command line arguments
