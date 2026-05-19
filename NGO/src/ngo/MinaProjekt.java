@@ -3,20 +3,65 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package ngo;
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
 
 /**
  *
  * @author nikla
  */
 public class MinaProjekt extends javax.swing.JFrame {
-    
+    private InfDB idb;
+    private String aid;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MinaProjekt.class.getName());
 
-    /**
-     * Creates new form MinaProjekt
-     */
-    public MinaProjekt() {
-        initComponents();
+    private void laddaProjekt() {
+    try {
+        String sql = "SELECT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+                + "p.kostnad, p.status, p.prioritet, "
+                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
+                + "l.namn AS land "
+                + "FROM projekt p "
+                + "JOIN ans_proj ap ON p.pid = ap.pid "
+                + "JOIN anstalld a ON p.projektchef = a.aid "
+                + "JOIN land l ON p.land = l.lid "
+                + "WHERE ap.aid = " + aid;
+
+        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+
+        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+            "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+
+        String[][] data = new String[projekt.size()][10];
+
+        for (int i = 0; i < projekt.size(); i++) {
+            data[i][0] = projekt.get(i).get("pid");
+            data[i][1] = projekt.get(i).get("projektnamn");
+            data[i][2] = projekt.get(i).get("beskrivning");
+            data[i][3] = projekt.get(i).get("startdatum");
+            data[i][4] = projekt.get(i).get("slutdatum");
+            data[i][5] = projekt.get(i).get("kostnad");
+            data[i][6] = projekt.get(i).get("status");
+            data[i][7] = projekt.get(i).get("prioritet");
+            data[i][8] = projekt.get(i).get("projektchef");
+            data[i][9] = projekt.get(i).get("land");
+        }
+
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+}
+    
+    
+    public MinaProjekt(InfDB idb, String aid) {
+    this.idb = idb;
+    this.aid = aid;
+    initComponents();
+    laddaProjekt();
     }
 
     /**
@@ -28,17 +73,33 @@ public class MinaProjekt extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblProjekt = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblProjekt);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
         );
 
         pack();
@@ -66,9 +127,11 @@ public class MinaProjekt extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MinaProjekt().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new MinaProjekt().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblProjekt;
     // End of variables declaration//GEN-END:variables
 }

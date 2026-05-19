@@ -15,6 +15,7 @@ public class Meny extends javax.swing.JFrame {
     
     private InfDB idb;
     private String inloggadAnvandare;
+    private String aid;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Meny.class.getName());
 
@@ -30,7 +31,7 @@ public class Meny extends javax.swing.JFrame {
         try{
             //hämta aid från användare
             String sqlAid = "SELECT aid FROM anstalld WHERE epost = '" + inloggadAnvandare + "'";
-            String aid = idb.fetchSingle(sqlAid);
+            aid = idb.fetchSingle(sqlAid);
             
             //kolla om användaren är admin
             String sqlAdmin = "SELECT aid FROM admin WHERE aid = " + aid;
@@ -208,8 +209,9 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnMinaProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinaProjektActionPerformed
         // TODO add your handling code here:
-        MinaProjekt minaProjekt = new MinaProjekt();
+        MinaProjekt minaProjekt = new MinaProjekt(idb, aid);
         minaProjekt.setVisible(true);
+
     }//GEN-LAST:event_btnMinaProjektActionPerformed
 
     private void btnHållbarhetsmålActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHållbarhetsmålActionPerformed
