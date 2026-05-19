@@ -38,8 +38,16 @@ public class Meny extends javax.swing.JFrame {
             
             if(behorighetsniva.equals("1")){
                 lblRoll.setText("Administratör");
+                
             } else{
                 lblRoll.setText("Handläggare");
+                lblHantera.setVisible(false);
+                btnProjekt.setVisible(false);
+                btnAnställda.setVisible(false);
+                btnAvdelningar.setVisible(false);
+                btnHanteraPartners.setVisible(false);
+                btnLänder.setVisible(false);
+                btnHanteraHållbarhetsmål.setVisible(false);
             }
             
         }catch(InfException ex){
