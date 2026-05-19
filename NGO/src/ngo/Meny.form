@@ -25,15 +25,24 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="lblInloggadAnvandare" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnAndraUppgifter" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btnMinaProjekt" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btnPartners" alignment="0" max="32767" attributes="0"/>
-                  <Component id="btnPersonal" alignment="0" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="lblHantera" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jButton1" max="32767" attributes="0"/>
+                          <Component id="lblInloggadAnvandare" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnAndraUppgifter" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnMinaProjekt" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnPartners" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnPersonal" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="237" max="32767" attributes="0"/>
+                      <Component id="lblRoll" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace pref="237" max="32767" attributes="0"/>
-              <Component id="lblRoll" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -54,7 +63,11 @@
               <Component id="btnPersonal" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnAndraUppgifter" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="150" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+              <Component id="lblHantera" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="53" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -88,6 +101,16 @@
     <Component class="javax.swing.JLabel" name="lblRoll">
       <Properties>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblHantera">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Hantera"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Projekt"/>
       </Properties>
     </Component>
   </SubComponents>
