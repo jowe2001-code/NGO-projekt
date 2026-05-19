@@ -35,40 +35,27 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="lblInloggadAnvandare" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="btnMinaProjekt" min="-2" pref="142" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="btnPartners" min="-2" pref="142" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Component id="btnAvdelningensProjekt" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="btnPersonal" max="32767" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <Component id="btnAvdelningar" max="32767" attributes="0"/>
-                                      <EmptySpace min="-2" pref="154" max="-2" attributes="0"/>
-                                  </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="btnAvdelningar" linkSize="1" alignment="0" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <Component id="btnProjekt" linkSize="1" alignment="0" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <Component id="btnAvdelningensProjekt" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnMinaProjekt" linkSize="1" alignment="0" min="-2" pref="142" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="btnHanteraHållbarhetsmål" max="32767" attributes="0"/>
-                                  <Component id="btnLänder" max="32767" attributes="0"/>
-                                  <Component id="btnHållbarhetsmål" max="32767" attributes="0"/>
-                                  <Component id="btnAndraUppgifter" pref="142" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                      <Component id="btnPersonal" linkSize="1" alignment="0" min="-2" pref="142" max="-2" attributes="0"/>
+                                      <Component id="btnPartners" linkSize="1" alignment="1" min="-2" pref="142" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="btnHanteraPartners" linkSize="1" alignment="0" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <Component id="btnAnställda" linkSize="1" alignment="0" min="-2" pref="142" max="-2" attributes="0"/>
                               </Group>
-                          </Group>
-                          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                              <Component id="btnAnställda" alignment="1" min="-2" pref="142" max="-2" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <Component id="btnProjekt" min="-2" pref="142" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btnHanteraPartners" min="-2" pref="142" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="btnHanteraHållbarhetsmål" linkSize="1" alignment="1" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <Component id="btnLänder" linkSize="1" alignment="1" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <Component id="btnAndraUppgifter" linkSize="1" alignment="1" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <Component id="btnHållbarhetsmål" linkSize="1" alignment="1" min="-2" pref="142" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -88,10 +75,10 @@
                   <Component id="lblRoll" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnMinaProjekt" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnPartners" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnHållbarhetsmål" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="btnHållbarhetsmål" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnPartners" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnMinaProjekt" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -108,10 +95,10 @@
                   <Component id="btnHanteraPartners" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnHanteraHållbarhetsmål" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnAvdelningar" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnAnställda" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="btnAvdelningar" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAnställda" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnHanteraHållbarhetsmål" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="24" max="32767" attributes="0"/>
           </Group>
