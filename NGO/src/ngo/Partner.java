@@ -4,13 +4,56 @@
  */
 package ngo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
 /**
  *
- * @author Jobb
+ * @author David
  */
 public class Partner extends javax.swing.JFrame {
     
+    private InfDB idb;
+    private String aid;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Partner.class.getName());
+    
+   private void laddaPartners() {
+    try {
+        // 1. Vi hämtar FLER kolumner från databasen så vi har något att fylla tabellen med
+        String sql = "SELECT partner.pid, partner.namn, partner.telefon, partner.kontaktpost FROM partner " +
+                     "JOIN projekt_partner ON partner.pid = projekt_partner.partner_id " +
+                     "JOIN projekt ON projekt_partner.pid = projekt.pid " +
+                     "JOIN ans_proj ON projekt.pid = ans_proj.pid " +
+                     "WHERE ans_proj.aid = " + aid;
+
+        // 2. Vi använder fetchRows precis som Niklas!
+        java.util.ArrayList<java.util.HashMap<String, String>> partnerData = idb.fetchRows(sql);
+
+        // 3. Vi skapar rubrikerna till dina kolumner
+        String[] kolumner = {"ID", "Partnernamn", "Telefon", "E-post"};
+
+        if (partnerData != null && !partnerData.isEmpty()) {
+            // 4. Vi förbereder matrisen (antal rader utifrån svaret, och 4 kolumner)
+            String[][] data = new String[partnerData.size()][4];
+
+            // 5. Loopen som hämtar datan från databasen och lägger i tabellen (Exakt som Niklas!)
+            for (int i = 0; i < partnerData.size(); i++) {
+                data[i][0] = partnerData.get(i).get("pid");
+                data[i][1] = partnerData.get(i).get("namn");
+                data[i][2] = partnerData.get(i).get("telefon");
+                data[i][3] = partnerData.get(i).get("kontaktpost");
+            }
+
+            // 6. Vi trycker in all data i er tabell (Se till att er tabell heter tblPartners i designläget!)
+            tblPartners.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+        }
+
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+} 
 
     /**
      * Creates new form Partner
@@ -28,17 +71,37 @@ public class Partner extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblPartners = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        tblPartners.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblPartners);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 25, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 25, Short.MAX_VALUE))
         );
 
         pack();
@@ -70,5 +133,7 @@ public class Partner extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblPartners;
     // End of variables declaration//GEN-END:variables
 }
