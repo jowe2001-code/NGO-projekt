@@ -26,32 +26,51 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="jButton1" max="32767" attributes="0"/>
-                      <Component id="btnProjekt" max="32767" attributes="0"/>
-                      <Component id="lblInloggadAnvandare" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnAndraUppgifter" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnMinaProjekt" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnPartners" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnPersonal" alignment="0" max="32767" attributes="0"/>
-                  </Group>
-                  <Component id="lblHantera" alignment="0" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="0" pref="231" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="lblHantera" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="lblRoll" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButton2" pref="114" max="32767" attributes="0"/>
-                          <Component id="jButton3" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButton4" max="32767" attributes="0"/>
-                          <Component id="jButton5" pref="114" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lblInloggadAnvandare" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="btnMinaProjekt" min="-2" pref="142" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="btnPartners" min="-2" pref="142" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="btnAvdelningensProjekt" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="btnPersonal" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="btnAvdelningar" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" pref="154" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="btnHanteraHållbarhetsmål" max="32767" attributes="0"/>
+                                  <Component id="btnLänder" max="32767" attributes="0"/>
+                                  <Component id="btnHållbarhetsmål" max="32767" attributes="0"/>
+                                  <Component id="btnAndraUppgifter" pref="142" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                              <Component id="btnAnställda" alignment="1" min="-2" pref="142" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="btnProjekt" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btnHanteraPartners" min="-2" pref="142" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
@@ -69,26 +88,30 @@
                   <Component id="lblRoll" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="btnMinaProjekt" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnMinaProjekt" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnPartners" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnHållbarhetsmål" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="btnPartners" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="btnPersonal" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="btnAndraUppgifter" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="btnAvdelningensProjekt" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnPersonal" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAndraUppgifter" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="110" max="-2" attributes="0"/>
               <Component id="lblHantera" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnProjekt" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnLänder" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnHanteraPartners" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton5" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnHanteraHållbarhetsmål" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAvdelningar" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAnställda" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="24" max="32767" attributes="0"/>
           </Group>
@@ -105,9 +128,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Mina Projekt"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMinaProjektActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnPartners">
       <Properties>
@@ -122,6 +142,16 @@
     <Component class="javax.swing.JButton" name="btnAndraUppgifter">
       <Properties>
         <Property name="text" type="java.lang.String" value="&#xc4;ndra uppgifter"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnAvdelningensProjekt">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Avdelningens Projekt"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnH&#xe5;llbarhetsm&#xe5;l">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="H&#xe5;llbarhetsm&#xe5;l"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lblRoll">
@@ -139,27 +169,27 @@
         <Property name="text" type="java.lang.String" value="Projekt"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="btnAnst&#xe4;llda">
       <Properties>
         <Property name="text" type="java.lang.String" value="Anst&#xe4;llda"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton2">
+    <Component class="javax.swing.JButton" name="btnAvdelningar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Avdelningar"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton3">
+    <Component class="javax.swing.JButton" name="btnHanteraPartners">
       <Properties>
         <Property name="text" type="java.lang.String" value="Partners"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton4">
+    <Component class="javax.swing.JButton" name="btnL&#xe4;nder">
       <Properties>
         <Property name="text" type="java.lang.String" value="L&#xe4;nder"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton5">
+    <Component class="javax.swing.JButton" name="btnHanteraH&#xe5;llbarhetsm&#xe5;l">
       <Properties>
         <Property name="text" type="java.lang.String" value="H&#xe5;llbarhetsm&#xe5;l"/>
       </Properties>

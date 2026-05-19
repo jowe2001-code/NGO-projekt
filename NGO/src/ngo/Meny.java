@@ -63,21 +63,22 @@ public class Meny extends javax.swing.JFrame {
         btnPartners = new javax.swing.JButton();
         btnPersonal = new javax.swing.JButton();
         btnAndraUppgifter = new javax.swing.JButton();
+        btnAvdelningensProjekt = new javax.swing.JButton();
+        btnHållbarhetsmål = new javax.swing.JButton();
         lblRoll = new javax.swing.JLabel();
         lblHantera = new javax.swing.JLabel();
         btnProjekt = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        btnAnställda = new javax.swing.JButton();
+        btnAvdelningar = new javax.swing.JButton();
+        btnHanteraPartners = new javax.swing.JButton();
+        btnLänder = new javax.swing.JButton();
+        btnHanteraHållbarhetsmål = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lblInloggadAnvandare.setText("jLabel1");
 
         btnMinaProjekt.setText("Mina Projekt");
-        btnMinaProjekt.addActionListener(this::btnMinaProjektActionPerformed);
 
         btnPartners.setText("Partners");
 
@@ -85,21 +86,25 @@ public class Meny extends javax.swing.JFrame {
 
         btnAndraUppgifter.setText("Ändra uppgifter");
 
+        btnAvdelningensProjekt.setText("Avdelningens Projekt");
+
+        btnHållbarhetsmål.setText("Hållbarhetsmål");
+
         lblRoll.setText("jLabel1");
 
         lblHantera.setText("Hantera");
 
         btnProjekt.setText("Projekt");
 
-        jButton1.setText("Anställda");
+        btnAnställda.setText("Anställda");
 
-        jButton2.setText("Avdelningar");
+        btnAvdelningar.setText("Avdelningar");
 
-        jButton3.setText("Partners");
+        btnHanteraPartners.setText("Partners");
 
-        jButton4.setText("Länder");
+        btnLänder.setText("Länder");
 
-        jButton5.setText("Hållbarhetsmål");
+        btnHanteraHållbarhetsmål.setText("Hållbarhetsmål");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -108,28 +113,40 @@ public class Meny extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnProjekt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblInloggadAnvandare, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(btnAndraUppgifter, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnMinaProjekt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnPartners, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnPersonal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(lblHantera))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 231, Short.MAX_VALUE)
+                        .addComponent(lblHantera)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblRoll))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblInloggadAnvandare)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(btnMinaProjekt, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnPartners, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(btnAvdelningensProjekt)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnPersonal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnAvdelningar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(154, 154, 154)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnHanteraHållbarhetsmål, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnLänder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnHållbarhetsmål, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnAndraUppgifter, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(btnAnställda, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(btnProjekt, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnHanteraPartners, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -141,60 +158,32 @@ public class Meny extends javax.swing.JFrame {
                     .addComponent(lblInloggadAnvandare)
                     .addComponent(lblRoll))
                 .addGap(18, 18, 18)
-                .addComponent(btnMinaProjekt)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnMinaProjekt)
+                    .addComponent(btnPartners)
+                    .addComponent(btnHållbarhetsmål))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPartners)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPersonal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAndraUppgifter)
-                .addGap(52, 52, 52)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAvdelningensProjekt)
+                    .addComponent(btnPersonal)
+                    .addComponent(btnAndraUppgifter))
+                .addGap(110, 110, 110)
                 .addComponent(lblHantera)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnProjekt)
-                    .addComponent(jButton2)
-                    .addComponent(jButton4))
+                    .addComponent(btnLänder)
+                    .addComponent(btnHanteraPartners))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton3)
-                    .addComponent(jButton5))
+                    .addComponent(btnHanteraHållbarhetsmål)
+                    .addComponent(btnAvdelningar)
+                    .addComponent(btnAnställda))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnMinaProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinaProjektActionPerformed
-        // TODO add your handling code here:
-        try {
-    // hämtar från sql
-    String sqlFraga = "SELECT projekt.projektnamn " +
-                      "FROM projekt " +
-                      "JOIN ans_proj ON projekt.pid = ans_proj.pid " +
-                      "JOIN anstalld ON ans_proj.aid = anstalld.aid " +
-                      "WHERE anstalld.epost = '" + inloggadAnvandare + "'";
-
-    // 2. Vi ber databasen hämta kolumn med alla projektnamn
-    java.util.ArrayList<String> projektLista = idb.fetchColumn(sqlFraga);
-
-    // 3. Vi kollar om vi fick något svar från databasen
-    if (projektLista != null && !projektLista.isEmpty()) {
-        //
-        String allaProjekt = String.join(", ", projektLista);
-        
-        //
-        javax.swing.JOptionPane.showMessageDialog(this, "Du är med i följande projekt: " + allaProjekt);
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Du är inte tilldelad några projekt för tillfället.");
-    }
-
-} catch (oru.inf.InfException ex) {
-    // felmeddelande
-    javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod: " + ex.getMessage());
-}
-    }//GEN-LAST:event_btnMinaProjektActionPerformed
 
     /**
      * @param args the command line arguments
@@ -223,15 +212,17 @@ public class Meny extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAndraUppgifter;
+    private javax.swing.JButton btnAnställda;
+    private javax.swing.JButton btnAvdelningar;
+    private javax.swing.JButton btnAvdelningensProjekt;
+    private javax.swing.JButton btnHanteraHållbarhetsmål;
+    private javax.swing.JButton btnHanteraPartners;
+    private javax.swing.JButton btnHållbarhetsmål;
+    private javax.swing.JButton btnLänder;
     private javax.swing.JButton btnMinaProjekt;
     private javax.swing.JButton btnPartners;
     private javax.swing.JButton btnPersonal;
     private javax.swing.JButton btnProjekt;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel lblHantera;
     private javax.swing.JLabel lblInloggadAnvandare;
     private javax.swing.JLabel lblRoll;
