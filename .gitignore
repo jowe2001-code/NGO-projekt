@@ -1,2 +1,15 @@
-/NGO/nbproject/private/
-/NGO/build/
+# Compiled class files
+*.class
+
+# NetBeans specific
+nbproject/private/
+build/
+dist/
+nbbuild/
+
+# MacOS
+.DS_Store
+_MACOSX/
+
+# Log files
+*.log
