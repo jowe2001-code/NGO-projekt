@@ -97,8 +97,10 @@ public class Meny extends javax.swing.JFrame {
         btnAndraUppgifter.setText("Ändra uppgifter");
 
         btnAvdelningensProjekt.setText("Avdelningens Projekt");
+        btnAvdelningensProjekt.addActionListener(this::btnAvdelningensProjektActionPerformed);
 
         btnHållbarhetsmål.setText("Hållbarhetsmål");
+        btnHållbarhetsmål.addActionListener(this::btnHållbarhetsmålActionPerformed);
 
         lblRoll.setText("jLabel1");
 
@@ -201,6 +203,18 @@ public class Meny extends javax.swing.JFrame {
         MinaProjekt minaProjekt = new MinaProjekt();
         minaProjekt.setVisible(true);
     }//GEN-LAST:event_btnMinaProjektActionPerformed
+
+    private void btnHållbarhetsmålActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHållbarhetsmålActionPerformed
+        // TODO add your handling code here:
+        Hållbarhetsmål mål = new Hållbarhetsmål();
+        mål.setVisible(true);
+    }//GEN-LAST:event_btnHållbarhetsmålActionPerformed
+
+    private void btnAvdelningensProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvdelningensProjektActionPerformed
+        // TODO add your handling code here:
+        AvdelningensProjekt avdProjekt = new AvdelningensProjekt();
+        avdProjekt.setVisible(true);
+    }//GEN-LAST:event_btnAvdelningensProjektActionPerformed
 
     /**
      * @param args the command line arguments
