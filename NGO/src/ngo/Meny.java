@@ -87,6 +87,7 @@ public class Meny extends javax.swing.JFrame {
         lblInloggadAnvandare.setText("jLabel1");
 
         btnMinaProjekt.setText("Mina Projekt");
+        btnMinaProjekt.addActionListener(this::btnMinaProjektActionPerformed);
 
         btnPartners.setText("Partners");
         btnPartners.addActionListener(this::btnPartnersActionPerformed);
@@ -194,6 +195,12 @@ public class Meny extends javax.swing.JFrame {
         Partner partner = new Partner();
         partner.setVisible(true);
     }//GEN-LAST:event_btnPartnersActionPerformed
+
+    private void btnMinaProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinaProjektActionPerformed
+        // TODO add your handling code here:
+        MinaProjekt minaProjekt = new MinaProjekt();
+        minaProjekt.setVisible(true);
+    }//GEN-LAST:event_btnMinaProjektActionPerformed
 
     /**
      * @param args the command line arguments
