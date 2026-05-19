@@ -81,6 +81,7 @@ public class Meny extends javax.swing.JFrame {
         btnMinaProjekt.setText("Mina Projekt");
 
         btnPartners.setText("Partners");
+        btnPartners.addActionListener(this::btnPartnersActionPerformed);
 
         btnPersonal.setText("Personal");
 
@@ -179,6 +180,12 @@ public class Meny extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPartnersActionPerformed
+        // TODO add your handling code here:
+        Partner partner = new Partner();
+        partner.setVisible(true);
+    }//GEN-LAST:event_btnPartnersActionPerformed
 
     /**
      * @param args the command line arguments
