@@ -131,11 +131,17 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Personal"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPersonalActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnAndraUppgifter">
       <Properties>
         <Property name="text" type="java.lang.String" value="&#xc4;ndra uppgifter"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAndraUppgifterActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnAvdelningensProjekt">
       <Properties>
@@ -167,31 +173,49 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Projekt"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnProjektActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnAnst&#xe4;llda">
       <Properties>
         <Property name="text" type="java.lang.String" value="Anst&#xe4;llda"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAnst&#xe4;lldaActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnAvdelningar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Avdelningar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAvdelningarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnHanteraPartners">
       <Properties>
         <Property name="text" type="java.lang.String" value="Partners"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHanteraPartnersActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnL&#xe4;nder">
       <Properties>
         <Property name="text" type="java.lang.String" value="L&#xe4;nder"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnL&#xe4;nderActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnHanteraH&#xe5;llbarhetsm&#xe5;l">
       <Properties>
         <Property name="text" type="java.lang.String" value="H&#xe5;llbarhetsm&#xe5;l"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHanteraH&#xe5;llbarhetsm&#xe5;lActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -93,8 +93,10 @@ public class Meny extends javax.swing.JFrame {
         btnPartners.addActionListener(this::btnPartnersActionPerformed);
 
         btnPersonal.setText("Personal");
+        btnPersonal.addActionListener(this::btnPersonalActionPerformed);
 
         btnAndraUppgifter.setText("Ändra uppgifter");
+        btnAndraUppgifter.addActionListener(this::btnAndraUppgifterActionPerformed);
 
         btnAvdelningensProjekt.setText("Avdelningens Projekt");
         btnAvdelningensProjekt.addActionListener(this::btnAvdelningensProjektActionPerformed);
@@ -107,16 +109,22 @@ public class Meny extends javax.swing.JFrame {
         lblHantera.setText("Hantera");
 
         btnProjekt.setText("Projekt");
+        btnProjekt.addActionListener(this::btnProjektActionPerformed);
 
         btnAnställda.setText("Anställda");
+        btnAnställda.addActionListener(this::btnAnställdaActionPerformed);
 
         btnAvdelningar.setText("Avdelningar");
+        btnAvdelningar.addActionListener(this::btnAvdelningarActionPerformed);
 
         btnHanteraPartners.setText("Partners");
+        btnHanteraPartners.addActionListener(this::btnHanteraPartnersActionPerformed);
 
         btnLänder.setText("Länder");
+        btnLänder.addActionListener(this::btnLänderActionPerformed);
 
         btnHanteraHållbarhetsmål.setText("Hållbarhetsmål");
+        btnHanteraHållbarhetsmål.addActionListener(this::btnHanteraHållbarhetsmålActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -215,6 +223,54 @@ public class Meny extends javax.swing.JFrame {
         AvdelningensProjekt avdProjekt = new AvdelningensProjekt();
         avdProjekt.setVisible(true);
     }//GEN-LAST:event_btnAvdelningensProjektActionPerformed
+
+    private void btnPersonalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPersonalActionPerformed
+        // TODO add your handling code here:
+        Personal personal = new Personal();
+        personal.setVisible(true);
+    }//GEN-LAST:event_btnPersonalActionPerformed
+
+    private void btnAndraUppgifterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAndraUppgifterActionPerformed
+        // TODO add your handling code here:
+        ÄndraUppgifter uppgifter = new ÄndraUppgifter();
+        uppgifter.setVisible(true);
+    }//GEN-LAST:event_btnAndraUppgifterActionPerformed
+
+    private void btnProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjektActionPerformed
+        // TODO add your handling code here:
+        AdminProjekt adminProjekt = new AdminProjekt();
+        adminProjekt.setVisible(true);
+    }//GEN-LAST:event_btnProjektActionPerformed
+
+    private void btnHanteraPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHanteraPartnersActionPerformed
+        // TODO add your handling code here:
+        AdminPartners adminPartners = new AdminPartners();
+        adminPartners.setVisible(true);
+    }//GEN-LAST:event_btnHanteraPartnersActionPerformed
+
+    private void btnLänderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLänderActionPerformed
+        // TODO add your handling code here:
+        AdminLänder adminLänder = new AdminLänder();
+        adminLänder.setVisible(true);
+    }//GEN-LAST:event_btnLänderActionPerformed
+
+    private void btnAvdelningarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvdelningarActionPerformed
+        // TODO add your handling code here:
+        AdminLänder adminLänder = new AdminLänder();
+        adminLänder.setVisible(true);
+    }//GEN-LAST:event_btnAvdelningarActionPerformed
+
+    private void btnAnställdaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnställdaActionPerformed
+        // TODO add your handling code here:
+        AdminAnställda adminAnställda = new AdminAnställda();
+        adminAnställda.setVisible(true);
+    }//GEN-LAST:event_btnAnställdaActionPerformed
+
+    private void btnHanteraHållbarhetsmålActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHanteraHållbarhetsmålActionPerformed
+        // TODO add your handling code here:
+        AdminHållbarhetsmål adminMål = new AdminHållbarhetsmål();
+        adminMål.setVisible(true);
+    }//GEN-LAST:event_btnHanteraHållbarhetsmålActionPerformed
 
     /**
      * @param args the command line arguments
