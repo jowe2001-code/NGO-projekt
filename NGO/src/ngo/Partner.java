@@ -78,13 +78,13 @@ public class Partner extends javax.swing.JFrame {
 
         tblPartners.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "pid", "Namn", "Kontaktperson", "E-post", "Telefonnummer", "Adress", "Branch", "Stad"
             }
         ));
         jScrollPane1.setViewportView(tblPartners);
