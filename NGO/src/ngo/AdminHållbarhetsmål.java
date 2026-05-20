@@ -75,6 +75,7 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         adminHållbarhetsmål = new javax.swing.JTable();
+        btnSpara = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -91,6 +92,9 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(adminHållbarhetsmål);
 
+        btnSpara.setText("Spara Ändring");
+        btnSpara.addActionListener(this::btnSparaActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -99,16 +103,56 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1205, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSpara)
+                .addGap(53, 53, 53))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 25, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSpara))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
+        // TODO add your handling code here:
+        if (adminHållbarhetsmål.isEditing()) {
+            adminHållbarhetsmål.getCellEditor().stopCellEditing();
+        }
+        DefaultTableModel model = (DefaultTableModel) adminHållbarhetsmål.getModel();
+        int antalRader = model.getRowCount();
+
+        try {
+            for (int i = 0; i < antalRader; i++) {
+                
+                String hid = model.getValueAt(i, 0).toString();
+                String namn = model.getValueAt(i, 1).toString();
+                String malnummer = model.getValueAt(i, 2).toString();
+                String beskrivning = model.getValueAt(i, 3).toString();
+                String prioritet = model.getValueAt(i, 4).toString();
+
+                String sqlUppdatera = "UPDATE hallbarhetsmal SET " +
+                        "namn = '" + namn + "', " +
+                        "malnummer = '" + malnummer + "', " +
+                        "beskrivning = '" + beskrivning + "', " +
+                        "prioritet = '" + prioritet + "' " +
+                        "WHERE hid = " + hid;
+
+                idb.update(sqlUppdatera);
+            }
+            
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna av hållbarhetsmålen har sparats!");
+
+        } catch (InfException ex) {
+            System.out.println("Fel vid uppdatering av hållbarhetsmål: " + ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod när ändringarna skulle sparas.");
+        }
+    }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -137,6 +181,7 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable adminHållbarhetsmål;
+    private javax.swing.JButton btnSpara;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
