@@ -16,16 +16,16 @@ import javax.swing.table.DefaultTableModel;
 public class Partner extends javax.swing.JFrame {
     
     private InfDB idb;
-    private boolean arAdmin;
+    private String aid;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Partner.class.getName());
 
     /**
      * Creates new form Partner
      */
-    public Partner(InfDB idb, boolean arAdmin) {
+    public Partner(InfDB idb, String aid) {
         this.idb = idb;
-        this.arAdmin = arAdmin;
+        this.aid = aid;
         initComponents();
         
         fyllTabell(); 
@@ -38,19 +38,26 @@ public class Partner extends javax.swing.JFrame {
         DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return arAdmin;
+                return false;
             }
         };
         
         tblPartners.setModel(model);
         
-        try {
-            String sqlFraga = "SELECT * FROM partner"; // Ändra om din tabell heter något annat
-            java.util.ArrayList<java.util.HashMap<String, String>> allaPartners = idb.fetchRows(sqlFraga);
+try {
+            // Här är den magiska SQL-frågan!
+            // Vi använder DISTINCT för att partnern bara ska visas en gång, 
+            // även om den anställda är med i FLERA projekt som har samma partner.
+            String sqlFraga = "SELECT DISTINCT partner.* FROM partner " +
+                              "JOIN projekt_partner ON partner.pid = projekt_partner.partner_pid " +
+                              "JOIN ans_proj ON projekt_partner.pid = ans_proj.pid " +
+                              "WHERE ans_proj.aid = " + aid;
             
-            if (allaPartners != null) {
-                for (java.util.HashMap<String, String> rad : allaPartners) {
-           
+            ArrayList<HashMap<String, String>> relevantaPartners = idb.fetchRows(sqlFraga);
+            
+            if (relevantaPartners != null) {
+                for (HashMap<String, String> rad : relevantaPartners) {
+                    
                     String[] dataRad = {
                         rad.get("pid"), 
                         rad.get("namn"), 
@@ -59,13 +66,13 @@ public class Partner extends javax.swing.JFrame {
                         rad.get("telefon"), 
                         rad.get("adress"), 
                         rad.get("branch"), 
-                        rad.get("stad")
+                        rad.get("Stad") 
                     };
                     model.addRow(dataRad);
                 }
             }
         } catch (InfException ex) {
-            System.out.println("Fel vid hämtning av partners: " + ex.getMessage());
+            System.out.println("Fel vid hämtning av relevanta partners: " + ex.getMessage());
         }
     }
 
@@ -101,8 +108,8 @@ public class Partner extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 25, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
