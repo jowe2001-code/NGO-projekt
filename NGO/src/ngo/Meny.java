@@ -272,7 +272,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnHanteraHållbarhetsmålActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHanteraHållbarhetsmålActionPerformed
         // TODO add your handling code here:
-        AdminHållbarhetsmål adminMål = new AdminHållbarhetsmål();
+        AdminHållbarhetsmål adminMål = new AdminHållbarhetsmål(idb, arAdmin);
         adminMål.setVisible(true);
     }//GEN-LAST:event_btnHanteraHållbarhetsmålActionPerformed
 

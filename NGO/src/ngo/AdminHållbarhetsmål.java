@@ -4,21 +4,67 @@
  */
 package ngo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author nikla
  */
 public class AdminHållbarhetsmål extends javax.swing.JFrame {
-    
+    private InfDB idb;
+    private boolean arAdmin;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminHållbarhetsmål.class.getName());
 
     /**
      * Creates new form AdminHållbarhetsmål
      */
-    public AdminHållbarhetsmål() {
+    public AdminHållbarhetsmål(InfDB idb, boolean arAdmin) {
+        this.idb = idb;
+        this.arAdmin = arAdmin;
         initComponents();
+        
+        fyllTabell();
     }
 
+    private void fyllTabell() {
+        String[] kolumnNamn = {"ID", "Namn", "Målnummer", "Beskrivning", "Prioritet"};
+        
+    
+    
+    DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return arAdmin; // true om admin, false om handläggare
+            }
+        };
+    //
+    adminHållbarhetsmål.setModel(model);
+    //
+    try {
+            String sqlFraga = "SELECT * FROM hallbarhetsmal";
+            ArrayList<HashMap<String, String>> allaMal = idb.fetchRows(sqlFraga);
+            
+            if (allaMal != null) {
+                for (HashMap<String, String> rad : allaMal) {
+                    
+                    // Hämta värdena med exakt samma namn som i databas-kolumnerna
+                    String[] dataRad = {
+                        rad.get("hid"), 
+                        rad.get("namn"), 
+                        rad.get("malnummer"), 
+                        rad.get("beskrivning"), 
+                        rad.get("prioritet") 
+                    };
+                    model.addRow(dataRad);
+                }
+            }
+        } catch (InfException ex) {
+            System.out.println("Fel vid hämtning av hållbarhetsmål: " + ex.getMessage());
+        }
+    }    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,17 +74,37 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        adminHållbarhetsmål = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        adminHållbarhetsmål.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "hid", "Namn", "Malnummer", "Prioritet"
+            }
+        ));
+        jScrollPane1.setViewportView(adminHållbarhetsmål);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 25, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 25, Short.MAX_VALUE))
         );
 
         pack();
@@ -66,9 +132,11 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AdminHållbarhetsmål().setVisible(true));
+      //  java.awt.EventQueue.invokeLater(() -> new AdminHållbarhetsmål().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable adminHållbarhetsmål;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
