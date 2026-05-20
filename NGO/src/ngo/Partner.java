@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import oru.inf.InfDB;
 import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author David
@@ -15,51 +16,57 @@ import oru.inf.InfException;
 public class Partner extends javax.swing.JFrame {
     
     private InfDB idb;
-    private String aid;
+    private boolean arAdmin;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Partner.class.getName());
-    
-   private void laddaPartners() {
-    try {
-        // 1. Vi hämtar FLER kolumner från databasen så vi har något att fylla tabellen med
-        String sql = "SELECT partner.pid, partner.namn, partner.telefon, partner.kontaktpost FROM partner " +
-                     "JOIN projekt_partner ON partner.pid = projekt_partner.partner_id " +
-                     "JOIN projekt ON projekt_partner.pid = projekt.pid " +
-                     "JOIN ans_proj ON projekt.pid = ans_proj.pid " +
-                     "WHERE ans_proj.aid = " + aid;
-
-        // 2. Vi använder fetchRows precis som Niklas!
-        java.util.ArrayList<java.util.HashMap<String, String>> partnerData = idb.fetchRows(sql);
-
-        // 3. Vi skapar rubrikerna till dina kolumner
-        String[] kolumner = {"ID", "Partnernamn", "Telefon", "E-post"};
-
-        if (partnerData != null && !partnerData.isEmpty()) {
-            // 4. Vi förbereder matrisen (antal rader utifrån svaret, och 4 kolumner)
-            String[][] data = new String[partnerData.size()][4];
-
-            // 5. Loopen som hämtar datan från databasen och lägger i tabellen (Exakt som Niklas!)
-            for (int i = 0; i < partnerData.size(); i++) {
-                data[i][0] = partnerData.get(i).get("pid");
-                data[i][1] = partnerData.get(i).get("namn");
-                data[i][2] = partnerData.get(i).get("telefon");
-                data[i][3] = partnerData.get(i).get("kontaktpost");
-            }
-
-            // 6. Vi trycker in all data i er tabell (Se till att er tabell heter tblPartners i designläget!)
-            tblPartners.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
-        }
-
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
-} 
 
     /**
      * Creates new form Partner
      */
-    public Partner() {
+    public Partner(InfDB idb, boolean arAdmin) {
+        this.idb = idb;
+        this.arAdmin = arAdmin;
         initComponents();
+        
+        fyllTabell(); 
+    }
+    
+    private void fyllTabell() {
+
+        String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad"};
+        
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return arAdmin;
+            }
+        };
+        
+        tblPartners.setModel(model);
+        
+        try {
+            String sqlFraga = "SELECT * FROM partner"; // Ändra om din tabell heter något annat
+            java.util.ArrayList<java.util.HashMap<String, String>> allaPartners = idb.fetchRows(sqlFraga);
+            
+            if (allaPartners != null) {
+                for (java.util.HashMap<String, String> rad : allaPartners) {
+           
+                    String[] dataRad = {
+                        rad.get("pid"), 
+                        rad.get("namn"), 
+                        rad.get("kontaktperson"), 
+                        rad.get("kontaktepost"), 
+                        rad.get("telefon"), 
+                        rad.get("adress"), 
+                        rad.get("branch"), 
+                        rad.get("stad")
+                    };
+                    model.addRow(dataRad);
+                }
+            }
+        } catch (InfException ex) {
+            System.out.println("Fel vid hämtning av partners: " + ex.getMessage());
+        }
     }
 
     /**
@@ -129,7 +136,7 @@ public class Partner extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Partner().setVisible(true));
+     //   java.awt.EventQueue.invokeLater(() -> new Partner().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

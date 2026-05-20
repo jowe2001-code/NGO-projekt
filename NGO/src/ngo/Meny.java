@@ -16,6 +16,7 @@ public class Meny extends javax.swing.JFrame {
     private InfDB idb;
     private String inloggadAnvandare;
     private String aid;
+    private boolean arAdmin = false; 
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Meny.class.getName());
 
@@ -39,6 +40,7 @@ public class Meny extends javax.swing.JFrame {
             
             if(behorighetsniva.equals("1")){
                 lblRoll.setText("Administratör");
+                arAdmin = true;
                 
             } else{
                 lblRoll.setText("Handläggare");
@@ -203,7 +205,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPartnersActionPerformed
         // TODO add your handling code here:
-        Partner partner = new Partner();
+        Partner partner = new Partner(idb, arAdmin);
         partner.setVisible(true);
     }//GEN-LAST:event_btnPartnersActionPerformed
 
