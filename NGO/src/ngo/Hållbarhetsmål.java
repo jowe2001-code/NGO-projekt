@@ -25,6 +25,14 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
         initComponents();
         
         fyllTabell();
+        tblHållbarhetsmål.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+
+        var colModel = tblHållbarhetsmål.getColumnModel();
+
+        colModel.getColumn(0).setPreferredWidth(75);
+        colModel.getColumn(1).setPreferredWidth(300);
+        colModel.getColumn(2).setPreferredWidth(1000);
+        colModel.getColumn(3).setPreferredWidth(75);
     }
 
     private void fyllTabell() 
@@ -35,7 +43,7 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
         tblHållbarhetsmål.setModel(model);
         
         try {
-            String mål = "SELECT namn, malnummer, beskrivning, prioritet FROM hallbarhetsmal";
+            String mål = "SELECT malnummer, namn, beskrivning, prioritet FROM hallbarhetsmal";
             java.util.ArrayList<java.util.HashMap<String, String>> allaMål = idb.fetchRows(mål);
             
             if (allaMål != null){
@@ -71,16 +79,25 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
 
         tblHållbarhetsmål.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Nummer", "Namn", "Beskrivning", "Prioritet"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblHållbarhetsmål.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jScrollPane1.setViewportView(tblHållbarhetsmål);
+        if (tblHållbarhetsmål.getColumnModel().getColumnCount() > 0) {
+            tblHållbarhetsmål.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -88,15 +105,15 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1453, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
