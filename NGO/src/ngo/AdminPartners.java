@@ -44,27 +44,45 @@ private void fyllTabell() {
       tblAdminPartners.setModel(model);
         
         try {
-            String sqlFraga = "SELECT partner.pid, partner.namn AS partnernamn, partner.kontaktperson, " +
-                              "partner.kontaktepost, partner.telefon, partner.adress, partner.branch, " +
-                              "stad.namn AS stadnamn, land.namn AS landnamn " +
-                              "FROM partner " +
-                              "JOIN stad ON partner.ort = stad.sid " +
-                              "JOIN land ON stad.land = land.lid";
+String sqlFraga = "SELECT * FROM partner";
             ArrayList<HashMap<String, String>> allaPartners = idb.fetchRows(sqlFraga);
             
             if (allaPartners != null) {
                 for (HashMap<String, String> rad : allaPartners) {
-                    String[] dataRad = {
+                    
+                    // 2. Vi hämtar ID:t för staden (som ligger i kolumnen 'stad')
+                    String stadId = rad.get("stad"); 
+                    String stadNamn = "";
+                    String landNamn = "";
+                    
+                    // 3. Om staden finns, slår vi upp vad den heter
+                    if(stadId != null) {
+                        String sqlStad = "SELECT namn FROM stad WHERE sid = " + stadId;
+                        stadNamn = idb.fetchSingle(sqlStad);
+                        
+                        // Vi hämtar också vilket land (ID) staden tillhör
+                        String sqlStadLandID = "SELECT land FROM stad WHERE sid = " + stadId;
+                        String landId = idb.fetchSingle(sqlStadLandID);
+                        
+                        // 4. Om landet finns, slår vi upp vad det heter
+                        if(landId != null) {
+                            String sqlLand = "SELECT namn FROM land WHERE lid = " + landId;
+                            landNamn = idb.fetchSingle(sqlLand);
+                        }
+                    }
+                    
+  String[] dataRad = {
                         rad.get("pid"), 
-                        rad.get("namn"), 
+                        rad.get("namn"),        
                         rad.get("kontaktperson"), 
                         rad.get("kontaktepost"), 
                         rad.get("telefon"), 
                         rad.get("adress"), 
                         rad.get("branch"), 
-                        rad.get("Stadnamn"), 
-                        rad.get("landnamn")
+                        stadNamn,                 
+                        landNamn                  
                     };
+                    
                     model.addRow(dataRad);
                 }
             }

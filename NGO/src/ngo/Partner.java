@@ -66,7 +66,7 @@ try {
                         rad.get("telefon"), 
                         rad.get("adress"), 
                         rad.get("branch"), 
-                        rad.get("Stad") 
+                        rad.get("stad") 
                     };
                     model.addRow(dataRad);
                 }
