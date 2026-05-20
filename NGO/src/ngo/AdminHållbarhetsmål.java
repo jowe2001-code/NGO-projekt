@@ -30,7 +30,7 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
     }
 
     private void fyllTabell() {
-        String[] kolumnNamn = {"ID", "Namn", "Målnummer", "Beskrivning", "Prioritet"};
+        String[] kolumnNamn = {"ID", "Namn", "Beskrivning", "Prioritet"};
         
     
     
@@ -54,7 +54,6 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
                     String[] dataRad = {
                         rad.get("hid"), 
                         rad.get("namn"), 
-                        rad.get("malnummer"), 
                         rad.get("beskrivning"), 
                         rad.get("prioritet") 
                     };
@@ -87,7 +86,7 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "hid", "Namn", "Malnummer", "Prioritet"
+                "hid", "Namn", "Beskrivning", "Prioritet"
             }
         ));
         jScrollPane1.setViewportView(adminHållbarhetsmål);
@@ -97,8 +96,9 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 25, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1205, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

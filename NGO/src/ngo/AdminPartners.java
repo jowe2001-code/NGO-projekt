@@ -32,7 +32,7 @@ public AdminPartners(InfDB idb, boolean arAdmin) {
         fyllTabell();
     }
 private void fyllTabell() {
-        String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad"};
+        String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad", "Land"};
         
         DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
             @Override
@@ -44,7 +44,12 @@ private void fyllTabell() {
       tblAdminPartners.setModel(model);
         
         try {
-            String sqlFraga = "SELECT * FROM partner"; 
+            String sqlFraga = "SELECT partner.pid, partner.namn AS partnernamn, partner.kontaktperson, " +
+                              "partner.kontaktepost, partner.telefon, partner.adress, partner.branch, " +
+                              "stad.namn AS stadnamn, land.namn AS landnamn " +
+                              "FROM partner " +
+                              "JOIN stad ON partner.ort = stad.sid " +
+                              "JOIN land ON stad.land = land.lid";
             ArrayList<HashMap<String, String>> allaPartners = idb.fetchRows(sqlFraga);
             
             if (allaPartners != null) {
@@ -57,7 +62,8 @@ private void fyllTabell() {
                         rad.get("telefon"), 
                         rad.get("adress"), 
                         rad.get("branch"), 
-                        rad.get("stad") 
+                        rad.get("Stadnamn"), 
+                        rad.get("landnamn")
                     };
                     model.addRow(dataRad);
                 }
@@ -82,13 +88,13 @@ private void fyllTabell() {
 
         tblAdminPartners.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "pid", "Namn", "Kontaktperson", "E-post", "Nummer", "Adress", "Branch", "Stad"
+                "pid", "Namn", "Kontaktperson", "E-post", "Nummer", "Adress", "Branch", "Stad", "Land"
             }
         ));
         jScrollPane1.setViewportView(tblAdminPartners);
