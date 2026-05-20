@@ -99,8 +99,12 @@ String sqlFraga = "SELECT * FROM partner";
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAdminPartners = new javax.swing.JTable();
+        BtnSpara = new javax.swing.JButton();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -117,6 +121,9 @@ String sqlFraga = "SELECT * FROM partner";
         ));
         jScrollPane1.setViewportView(tblAdminPartners);
 
+        BtnSpara.setText("Spara ändringar");
+        BtnSpara.addActionListener(this::BtnSparaActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -124,16 +131,59 @@ String sqlFraga = "SELECT * FROM partner";
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1227, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BtnSpara)
+                .addGap(212, 212, 212))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 25, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BtnSpara))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void BtnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSparaActionPerformed
+        // TODO add your handling code here:
+        if (tblAdminPartners.isEditing()) {
+            tblAdminPartners.getCellEditor().stopCellEditing();
+        }
+
+        DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
+        int antalRader = model.getRowCount();
+
+        try {
+            for (int i = 0; i < antalRader; i++) {
+                String pid = model.getValueAt(i, 0).toString();
+                String namn = model.getValueAt(i, 1).toString();
+                String kontaktperson = model.getValueAt(i, 2).toString();
+                String epost = model.getValueAt(i, 3).toString();
+                String telefon = model.getValueAt(i, 4).toString();
+                String adress = model.getValueAt(i, 5).toString();
+                String branch = model.getValueAt(i, 6).toString();
+
+                String sqlUppdatera = "UPDATE partner SET " +
+                        "namn = '" + namn + "', " +
+                        "kontaktperson = '" + kontaktperson + "', " +
+                        "kontaktepost = '" + epost + "', " +
+                        "telefon = '" + telefon + "', " +
+                        "adress = '" + adress + "', " +
+                        "branch = '" + branch + "' " +
+                        "WHERE pid = " + pid;
+                
+                idb.update(sqlUppdatera);
+            }
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats i databasen!");
+
+        } catch (InfException ex) {
+            System.out.println("Fel vid uppdatering av partners: " + ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod när ändringarna skulle sparas.");
+        }
+    }//GEN-LAST:event_BtnSparaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -161,6 +211,8 @@ String sqlFraga = "SELECT * FROM partner";
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnSpara;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblAdminPartners;
     // End of variables declaration//GEN-END:variables
