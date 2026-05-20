@@ -33,7 +33,7 @@ public class Partner extends javax.swing.JFrame {
     
     private void fyllTabell() {
 
-        String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad"};
+        String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad", "land"};
         
         DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
             @Override
@@ -43,11 +43,7 @@ public class Partner extends javax.swing.JFrame {
         };
         
         tblPartners.setModel(model);
-        
-try {
-            // Här är den magiska SQL-frågan!
-            // Vi använder DISTINCT för att partnern bara ska visas en gång, 
-            // även om den anställda är med i FLERA projekt som har samma partner.
+        try {
             String sqlFraga = "SELECT DISTINCT partner.* FROM partner " +
                               "JOIN projekt_partner ON partner.pid = projekt_partner.partner_pid " +
                               "JOIN ans_proj ON projekt_partner.pid = ans_proj.pid " +
@@ -55,9 +51,27 @@ try {
             
             ArrayList<HashMap<String, String>> relevantaPartners = idb.fetchRows(sqlFraga);
             
-            if (relevantaPartners != null) {
+if (relevantaPartners != null) {
                 for (HashMap<String, String> rad : relevantaPartners) {
                     
+                    String stadId = rad.get("stad"); 
+                    String stadNamn = "";
+                    String landNamn = "";
+                    
+                    if(stadId != null) {
+                        String sqlStad = "SELECT namn FROM stad WHERE sid = " + stadId;
+                        stadNamn = idb.fetchSingle(sqlStad);
+                        
+                        String sqlStadLandID = "SELECT land FROM stad WHERE sid = " + stadId;
+                        String landId = idb.fetchSingle(sqlStadLandID);
+                        
+                        if(landId != null) {
+                            String sqlLand = "SELECT namn FROM land WHERE lid = " + landId;
+                            landNamn = idb.fetchSingle(sqlLand);
+                        }
+                    }
+
+                   
                     String[] dataRad = {
                         rad.get("pid"), 
                         rad.get("namn"), 
@@ -66,8 +80,10 @@ try {
                         rad.get("telefon"), 
                         rad.get("adress"), 
                         rad.get("branch"), 
-                        rad.get("stad") 
+                        stadNamn,                 
+                        landNamn                  
                     };
+                    
                     model.addRow(dataRad);
                 }
             }
@@ -92,15 +108,23 @@ try {
 
         tblPartners.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "pid", "Namn", "Kontaktperson", "E-post", "Telefonnummer", "Adress", "Branch", "Stad"
+                "pid", "Namn", "Kontaktperson", "E-post", "Telefonnummer", "Adress", "Branch", "Stad", "land"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tblPartners);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
