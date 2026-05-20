@@ -4,21 +4,57 @@
  */
 package ngo;
 
+import oru.inf.InfDB;
+import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nikla
  */
 public class Hållbarhetsmål extends javax.swing.JFrame {
-    
+    private InfDB idb;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Hållbarhetsmål.class.getName());
 
     /**
      * Creates new form Hållbarhetsmål
      */
-    public Hållbarhetsmål() {
+    public Hållbarhetsmål(InfDB idb) {
+        this.idb = idb;
+       
         initComponents();
+        
+        fyllTabell();
     }
 
+    private void fyllTabell() 
+    {
+        String[] kolumnNamn = {"Nummer", "Namn", "Beskrivning", "Prioritet"};
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0);
+        
+        tblHållbarhetsmål.setModel(model);
+        
+        try {
+            String mål = "SELECT namn, malnummer, beskrivning, prioritet FROM hallbarhetsmal";
+            java.util.ArrayList<java.util.HashMap<String, String>> allaMål = idb.fetchRows(mål);
+            
+            if (allaMål != null){
+                for (java.util.HashMap<String, String> rad : allaMål) {
+                    
+                    String[] dataRad = {
+                        rad.get("malnummer"),
+                        rad.get("namn"),
+                        rad.get("beskrivning"),
+                        rad.get("prioritet")
+                    };
+                    model.addRow(dataRad);
+                }
+            }
+        } catch (InfException ex) {
+            System.out.println("Fel vid hämtning av hållbarhetsmål: " + ex.getMessage());
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -88,7 +124,7 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Hållbarhetsmål().setVisible(true));
+        // java.awt.EventQueue.invokeLater(() -> new Hållbarhetsmål().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

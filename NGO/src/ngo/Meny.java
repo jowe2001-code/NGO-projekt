@@ -218,7 +218,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnHållbarhetsmålActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHållbarhetsmålActionPerformed
         // TODO add your handling code here:
-        Hållbarhetsmål mål = new Hållbarhetsmål();
+        Hållbarhetsmål mål = new Hållbarhetsmål(idb);
         mål.setVisible(true);
     }//GEN-LAST:event_btnHållbarhetsmålActionPerformed
 
