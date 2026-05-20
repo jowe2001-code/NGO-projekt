@@ -4,21 +4,68 @@
  */
 package ngo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author nikla
  */
 public class AdminPartners extends javax.swing.JFrame {
     
+    private InfDB idb;
+    private boolean arAdmin;
+   
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminPartners.class.getName());
 
     /**
      * Creates new form AdminPartners
      */
-    public AdminPartners() {
-        initComponents();
-    }
 
+public AdminPartners(InfDB idb, boolean arAdmin) {
+        this.idb = idb;
+        this.arAdmin = arAdmin;
+        initComponents();
+        
+        fyllTabell();
+    }
+private void fyllTabell() {
+        String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad"};
+        
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return arAdmin; 
+            }
+        };
+        
+      tblAdminPartners.setModel(model);
+        
+        try {
+            String sqlFraga = "SELECT * FROM partner"; 
+            ArrayList<HashMap<String, String>> allaPartners = idb.fetchRows(sqlFraga);
+            
+            if (allaPartners != null) {
+                for (HashMap<String, String> rad : allaPartners) {
+                    String[] dataRad = {
+                        rad.get("pid"), 
+                        rad.get("namn"), 
+                        rad.get("kontaktperson"), 
+                        rad.get("kontaktepost"), 
+                        rad.get("telefon"), 
+                        rad.get("adress"), 
+                        rad.get("branch"), 
+                        rad.get("stad") 
+                    };
+                    model.addRow(dataRad);
+                }
+            }
+        } catch (InfException ex) {
+            System.out.println("Fel vid hämtning av partners: " + ex.getMessage());
+        }
+    }  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,17 +75,37 @@ public class AdminPartners extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAdminPartners = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        tblAdminPartners.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "pid", "Namn", "Kontaktperson", "E-post", "Nummer", "Adress", "Branch", "Stad"
+            }
+        ));
+        jScrollPane1.setViewportView(tblAdminPartners);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 25, Short.MAX_VALUE))
         );
 
         pack();
@@ -66,9 +133,11 @@ public class AdminPartners extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AdminPartners().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new AdminPartners().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblAdminPartners;
     // End of variables declaration//GEN-END:variables
 }

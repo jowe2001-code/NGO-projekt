@@ -248,7 +248,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnHanteraPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHanteraPartnersActionPerformed
         // TODO add your handling code here:
-        AdminPartners adminPartners = new AdminPartners();
+        AdminPartners adminPartners = new AdminPartners(idb, arAdmin);
         adminPartners.setVisible(true);
     }//GEN-LAST:event_btnHanteraPartnersActionPerformed
 
