@@ -3,20 +3,70 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package ngo;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
 /**
  *
- * @author nikla
+ * @author david
  */
 public class AdminAnställda extends javax.swing.JFrame {
-    
+    private InfDB idb;
+    private boolean arAdmin;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAnställda.class.getName());
+    
 
     /**
      * Creates new form AdminAnställda
      */
-    public AdminAnställda() {
+public AdminAnställda(InfDB idb, boolean arAdmin) {
+        this.idb = idb;
+        this.arAdmin = arAdmin;
         initComponents();
+        
+        fyllTabell();
+    }
+
+private void fyllTabell() {
+    String[] kolumnNamn = {"ID", "Förnamn", "Efternamn", "Adress", "E-post", "Telefon", "Anst. datum", "Lösenord", "Avd. ID"};
+        
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return arAdmin; 
+            }
+        };
+        
+        tblAnstallda.setModel(model);
+        
+        try {
+            // 2. Hämta datan från tabellen anstalld
+            String sqlFraga = "SELECT * FROM anstalld";
+            ArrayList<HashMap<String, String>> allaAnstallda = idb.fetchRows(sqlFraga);
+            
+            if (allaAnstallda != null) {
+                for (HashMap<String, String> rad : allaAnstallda) {
+                    
+                    // 3. Matcha exakt mot hur kolumnerna stavas i DataGrip!
+                    String[] dataRad = {
+                        rad.get("aid"), 
+                        rad.get("fornamn"), 
+                        rad.get("efternamn"), 
+                        rad.get("adress"), 
+                        rad.get("epost"), 
+                        rad.get("telefon"), 
+                        rad.get("anstallningsdatum"), 
+                        rad.get("losenord"), 
+                        rad.get("avdelning") // Just nu visar vi bara Avdelningens ID-siffra
+                    };
+                    model.addRow(dataRad);
+                }
+            }
+        } catch (InfException ex) {
+            System.out.println("Fel vid hämtning av anställda: " + ex.getMessage());
+        }
     }
 
     /**
@@ -28,21 +78,96 @@ public class AdminAnställda extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAnstallda = new javax.swing.JTable();
+        btnSpara = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        tblAnstallda.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8"
+            }
+        ));
+        jScrollPane1.setViewportView(tblAnstallda);
+
+        btnSpara.setText("Spara ändring");
+        btnSpara.addActionListener(this::btnSparaActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSpara))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1023, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSpara))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
+        // TODO add your handling code here:
+        // Tvinga tabellen att spara cellen om man precis skrivit i den
+        if (tblAnstallda.isEditing()) {
+            tblAnstallda.getCellEditor().stopCellEditing();
+        }
+
+        DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
+        int antalRader = model.getRowCount();
+
+        try {
+            for (int i = 0; i < antalRader; i++) {
+                
+                String aid = model.getValueAt(i, 0).toString();
+                String fornamn = model.getValueAt(i, 1).toString();
+                String efternamn = model.getValueAt(i, 2).toString();
+                String adress = model.getValueAt(i, 3).toString();
+                String epost = model.getValueAt(i, 4).toString();
+                String telefon = model.getValueAt(i, 5).toString();
+                String anstallningsdatum = model.getValueAt(i, 6).toString();
+                String losenord = model.getValueAt(i, 7).toString();
+                String avdelning = model.getValueAt(i, 8).toString();
+
+                // Observera att aid och avdelning är siffror i databasen, så de har inga ' ' runt sig
+                String sqlUppdatera = "UPDATE anstalld SET " +
+                        "fornamn = '" + fornamn + "', " +
+                        "efternamn = '" + efternamn + "', " +
+                        "adress = '" + adress + "', " +
+                        "epost = '" + epost + "', " +
+                        "telefon = '" + telefon + "', " +
+                        "anstallningsdatum = '" + anstallningsdatum + "', " +
+                        "losenord = '" + losenord + "', " +
+                        "avdelning = " + avdelning + " " +
+                        "WHERE aid = " + aid;
+
+                idb.update(sqlUppdatera);
+            }
+            
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+
+        } catch (InfException ex) {
+            System.out.println("Fel vid uppdatering av anställda: " + ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att datum och avdelning har rätt format.");
+            }
+    }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -66,9 +191,12 @@ public class AdminAnställda extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AdminAnställda().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new AdminAnställda().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSpara;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblAnstallda;
     // End of variables declaration//GEN-END:variables
 }

@@ -266,7 +266,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnAnställdaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnställdaActionPerformed
         // TODO add your handling code here:
-        AdminAnställda adminAnställda = new AdminAnställda();
+        AdminAnställda adminAnställda = new AdminAnställda(idb, arAdmin);
         adminAnställda.setVisible(true);
     }//GEN-LAST:event_btnAnställdaActionPerformed
 
