@@ -46,7 +46,7 @@ public class MinaProjekt extends javax.swing.JFrame {
             data[i][6] = projekt.get(i).get("status");
             data[i][7] = projekt.get(i).get("prioritet");
             data[i][8] = projekt.get(i).get("projektchef");
-            data[i][9] = projekt.get(i).get("land");
+            data[i][9] = projekt.get(i).get("namn");
         }
 
         tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));

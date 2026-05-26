@@ -3,15 +3,126 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package ngo;
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
 
 /**
  *
  * @author nikla
  */
 public class AvdelningensProjekt extends javax.swing.JFrame {
-    
+    private InfDB idb;
+    private String aid;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AvdelningensProjekt.class.getName());
 
+    private void laddaProjekt() {
+    try {
+        // Hämta först avdelnings-id för den inloggade användaren
+        String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
+        String avdelningId = idb.fetchSingle(sqlAvd);
+        
+        // Hämta alla projekt för avdelningen
+        String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+                + "p.kostnad, p.status, p.prioritet, "
+                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
+                + "l.namn AS land "
+                + "FROM projekt p "
+                + "JOIN ans_proj ap ON p.pid = ap.pid "
+                + "JOIN anstalld a ON p.projektchef = a.aid "
+                + "JOIN land l ON p.land = l.lid "
+                + "JOIN anstalld ans ON ap.aid = ans.aid "
+                + "WHERE ans.avdelning = " + avdelningId;
+
+        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+
+        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+            "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+
+        String[][] data = new String[projekt.size()][10];
+
+        for (int i = 0; i < projekt.size(); i++) {
+            data[i][0] = projekt.get(i).get("pid");
+            data[i][1] = projekt.get(i).get("projektnamn");
+            data[i][2] = projekt.get(i).get("beskrivning");
+            data[i][3] = projekt.get(i).get("startdatum");
+            data[i][4] = projekt.get(i).get("slutdatum");
+            data[i][5] = projekt.get(i).get("kostnad");
+            data[i][6] = projekt.get(i).get("status");
+            data[i][7] = projekt.get(i).get("prioritet");
+            data[i][8] = projekt.get(i).get("projektchef");
+            data[i][9] = projekt.get(i).get("namn");
+        }
+
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+}
+    
+    
+    private void laddaProjektMedFilter(String status) {
+    try {
+        // Hämta avdelnings-id för inloggad användare
+        String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
+        String avdelningId = idb.fetchSingle(sqlAvd);
+        
+        // Hämta projekt filtrerade på status
+        String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+                + "p.kostnad, p.status, p.prioritet, "
+                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
+                + "l.namn AS land "
+                + "FROM projekt p "
+                + "JOIN ans_proj ap ON p.pid = ap.pid "
+                + "JOIN anstalld a ON p.projektchef = a.aid "
+                + "JOIN land l ON p.land = l.lid "
+                + "JOIN anstalld ans ON ap.aid = ans.aid "
+                + "WHERE ans.avdelning = " + avdelningId
+                + " AND p.status = '" + status + "'";
+
+        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+
+        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+            "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+
+        String[][] data = new String[projekt.size()][10];
+
+        for (int i = 0; i < projekt.size(); i++) {
+            data[i][0] = projekt.get(i).get("pid");
+            data[i][1] = projekt.get(i).get("projektnamn");
+            data[i][2] = projekt.get(i).get("beskrivning");
+            data[i][3] = projekt.get(i).get("startdatum");
+            data[i][4] = projekt.get(i).get("slutdatum");
+            data[i][5] = projekt.get(i).get("kostnad");
+            data[i][6] = projekt.get(i).get("status");
+            data[i][7] = projekt.get(i).get("prioritet");
+            data[i][8] = projekt.get(i).get("projektchef");
+            data[i][9] = projekt.get(i).get("namn");
+        }
+
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+}
+    
+    
+    public AvdelningensProjekt(InfDB idb, String aid) {
+    this.idb = idb;
+    this.aid = aid;
+    initComponents();
+    laddaProjekt();
+    // Fyll comboboxen med statusalternativ
+    cmbStatus.addItem("Alla");
+    cmbStatus.addItem("Pågående");
+    cmbStatus.addItem("Planerat");
+    cmbStatus.addItem("Avslutat");
+}
+    
+    
     /**
      * Creates new form AvdelningensProjekt
      */
@@ -28,21 +139,61 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblProjekt = new javax.swing.JTable();
+        cmbStatus = new javax.swing.JComboBox<>();
+        btnFiltrera = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblProjekt);
+
+        btnFiltrera.setText("Filtrera");
+        btnFiltrera.addActionListener(this::btnFiltreraActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cmbStatus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFiltrera, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnFiltrera))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnFiltreraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltreraActionPerformed
+        String valtStatus = cmbStatus.getSelectedItem().toString();
+    
+    if(valtStatus.equals("Alla")){
+        laddaProjekt();
+    } else {
+        laddaProjektMedFilter(valtStatus);
+    }
+    }//GEN-LAST:event_btnFiltreraActionPerformed
 
     /**
      * @param args the command line arguments
@@ -66,9 +217,13 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AvdelningensProjekt().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new AvdelningensProjekt().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnFiltrera;
+    private javax.swing.JComboBox<String> cmbStatus;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblProjekt;
     // End of variables declaration//GEN-END:variables
 }

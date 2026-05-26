@@ -38,7 +38,7 @@ public class Meny extends javax.swing.JFrame {
             String sqlAdmin = "SELECT aid FROM admin WHERE aid = " + aid;
             String behorighetsniva = idb.fetchSingle(sqlAdmin);
             
-            if(behorighetsniva.equals("1")){
+            if(behorighetsniva != null){
                 lblRoll.setText("Administratör");
                 arAdmin = true;
                 
@@ -224,7 +224,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnAvdelningensProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvdelningensProjektActionPerformed
         // TODO add your handling code here:
-        AvdelningensProjekt avdProjekt = new AvdelningensProjekt();
+        AvdelningensProjekt avdProjekt = new AvdelningensProjekt(idb, aid);
         avdProjekt.setVisible(true);
     }//GEN-LAST:event_btnAvdelningensProjektActionPerformed
 
@@ -236,7 +236,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnAndraUppgifterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAndraUppgifterActionPerformed
         // TODO add your handling code here:
-        ÄndraUppgifter uppgifter = new ÄndraUppgifter();
+        ÄndraUppgifter uppgifter = new ÄndraUppgifter(idb, aid);
         uppgifter.setVisible(true);
     }//GEN-LAST:event_btnAndraUppgifterActionPerformed
 
