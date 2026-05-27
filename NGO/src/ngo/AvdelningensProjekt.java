@@ -63,6 +63,58 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
 }
     
     
+    
+    private void sokProjektPaDatum(String datum) {
+    try {
+        // Hämta avdelnings-id för inloggad användare
+        String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
+        String avdelningId = idb.fetchSingle(sqlAvd);
+        
+        // Hämta alla aktiva projekt på avdelningen där datumet ligger inom projektets tidsspann
+        String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+                + "p.kostnad, p.status, p.prioritet, "
+                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
+                + "l.namn AS land "
+                + "FROM projekt p "
+                + "JOIN ans_proj ap ON p.pid = ap.pid "
+                + "JOIN anstalld a ON p.projektchef = a.aid "
+                + "JOIN land l ON p.land = l.lid "
+                + "JOIN anstalld ans ON ap.aid = ans.aid "
+                + "WHERE ans.avdelning = " + avdelningId
+                + " AND p.startdatum <= '" + datum + "'"
+                + " AND p.slutdatum >= '" + datum + "'";
+
+        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+
+        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+            "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+
+        String[][] data = new String[projekt.size()][10];
+
+        for (int i = 0; i < projekt.size(); i++) {
+            data[i][0] = projekt.get(i).get("pid");
+            data[i][1] = projekt.get(i).get("projektnamn");
+            data[i][2] = projekt.get(i).get("beskrivning");
+            data[i][3] = projekt.get(i).get("startdatum");
+            data[i][4] = projekt.get(i).get("slutdatum");
+            data[i][5] = projekt.get(i).get("kostnad");
+            data[i][6] = projekt.get(i).get("status");
+            data[i][7] = projekt.get(i).get("prioritet");
+            data[i][8] = projekt.get(i).get("projektchef");
+            data[i][9] = projekt.get(i).get("namn");
+        }
+
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+}
+    
+    
+    
+    
+    
     private void laddaProjektMedFilter(String status) {
     try {
         // Hämta avdelnings-id för inloggad användare
@@ -143,6 +195,11 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
         tblProjekt = new javax.swing.JTable();
         cmbStatus = new javax.swing.JComboBox<>();
         btnFiltrera = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        tfDatum = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        btnSokDatum = new javax.swing.JButton();
+        lblFelmeddelandeDatum = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -159,27 +216,65 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblProjekt);
 
+        cmbStatus.addActionListener(this::cmbStatusActionPerformed);
+
         btnFiltrera.setText("Filtrera");
         btnFiltrera.addActionListener(this::btnFiltreraActionPerformed);
+
+        jLabel1.setText("Sök på datum:");
+
+        tfDatum.setMinimumSize(new java.awt.Dimension(100, 22));
+        tfDatum.setPreferredSize(new java.awt.Dimension(100, 22));
+
+        jLabel2.setText("YYYY-MM-DD");
+
+        btnSokDatum.setText("Sök");
+        btnSokDatum.addActionListener(this::btnSokDatumActionPerformed);
+
+        lblFelmeddelandeDatum.setForeground(new java.awt.Color(255, 0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfDatum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSokDatum)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblFelmeddelandeDatum)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cmbStatus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnFiltrera, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnFiltrera)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnFiltrera))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnFiltrera)
+                    .addComponent(jLabel1)
+                    .addComponent(tfDatum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(btnSokDatum)
+                    .addComponent(lblFelmeddelandeDatum))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 249, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
 
         pack();
@@ -194,6 +289,25 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
         laddaProjektMedFilter(valtStatus);
     }
     }//GEN-LAST:event_btnFiltreraActionPerformed
+
+    private void cmbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbStatusActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbStatusActionPerformed
+
+    private void btnSokDatumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSokDatumActionPerformed
+        String datum = tfDatum.getText();
+    
+    // Validera datumet
+    if (Validering.arGiltigtDatum(datum)) {
+        // Datumet är giltigt - rensa felmeddelande och sök
+        lblFelmeddelandeDatum.setText("");
+        sokProjektPaDatum(datum);
+    } else {
+        // Datumet är ogiltigt - visa felmeddelande
+        lblFelmeddelandeDatum.setText("Ogiltigt datum. Använd formatet YYYY-MM-DD.");
+    }
+
+    }//GEN-LAST:event_btnSokDatumActionPerformed
 
     /**
      * @param args the command line arguments
@@ -222,8 +336,13 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnFiltrera;
+    private javax.swing.JButton btnSokDatum;
     private javax.swing.JComboBox<String> cmbStatus;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblFelmeddelandeDatum;
     private javax.swing.JTable tblProjekt;
+    private javax.swing.JTextField tfDatum;
     // End of variables declaration//GEN-END:variables
 }

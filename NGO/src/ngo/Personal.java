@@ -3,22 +3,97 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package ngo;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
 /**
  *
  * @author nikla
  */
 public class Personal extends javax.swing.JFrame {
-    
+    private InfDB idb;
+    private String aid;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Personal.class.getName());
 
     /**
      * Creates new form Personal
      */
-    public Personal() {
-        initComponents();
+    public Personal(InfDB idb, String aid) {
+    this.idb = idb;
+    this.aid = aid;
+    initComponents();
+    laddaPersonal();
     }
 
+    
+    private void laddaPersonal() {
+    try {
+        // Hämta all personal på samma avdelning som inloggad användare
+        String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.epost, a.telefon, "
+                + "a.adress, a.anstallningsdatum "
+                + "FROM anstalld a "
+                + "WHERE a.avdelning = (SELECT avdelning FROM anstalld WHERE aid = " + aid + ")";
+
+        ArrayList<HashMap<String, String>> personal = idb.fetchRows(sql);
+
+        String[] kolumner = {"ID", "Förnamn", "Efternamn", "E-post", "Telefon", "Adress", "Anställningsdatum"};
+
+        String[][] data = new String[personal.size()][7];
+
+        for (int i = 0; i < personal.size(); i++) {
+            data[i][0] = personal.get(i).get("aid");
+            data[i][1] = personal.get(i).get("fornamn");
+            data[i][2] = personal.get(i).get("efternamn");
+            data[i][3] = personal.get(i).get("epost");
+            data[i][4] = personal.get(i).get("telefon");
+            data[i][5] = personal.get(i).get("adress");
+            data[i][6] = personal.get(i).get("anstallningsdatum");
+        }
+
+        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+}
+    
+    
+    private void sokPersonal(String sokText) {
+    try {
+        // Söker på handläggare där namn eller e-post matchar söktexten
+        String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.epost, a.telefon, "
+        + "a.adress, a.anstallningsdatum "
+        + "FROM anstalld a "
+        + "WHERE a.avdelning = (SELECT avdelning FROM anstalld WHERE aid = " + aid + ") "
+        + "AND (a.fornamn LIKE '%" + sokText + "%' "
+        + "OR a.efternamn LIKE '%" + sokText + "%' "
+        + "OR a.epost LIKE '%" + sokText + "%')";
+
+        ArrayList<HashMap<String, String>> personal = idb.fetchRows(sql);
+
+        String[] kolumner = {"ID", "Förnamn", "Efternamn", "E-post", "Telefon", "Adress", "Anställningsdatum"};
+
+        String[][] data = new String[personal.size()][7];
+
+        for (int i = 0; i < personal.size(); i++) {
+            data[i][0] = personal.get(i).get("aid");
+            data[i][1] = personal.get(i).get("fornamn");
+            data[i][2] = personal.get(i).get("efternamn");
+            data[i][3] = personal.get(i).get("epost");
+            data[i][4] = personal.get(i).get("telefon");
+            data[i][5] = personal.get(i).get("adress");
+            data[i][6] = personal.get(i).get("anstallningsdatum");
+        }
+
+        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+}
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,21 +103,77 @@ public class Personal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblPersonal = new javax.swing.JTable();
+        tfSok = new javax.swing.JTextField();
+        btnSok = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        btnVisaAlla = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblPersonal);
+
+        btnSok.setText("Sök");
+        btnSok.addActionListener(this::btnSokActionPerformed);
+
+        jLabel1.setText("Sök på namn eller e-post:");
+
+        btnVisaAlla.setText("Visa alla");
+        btnVisaAlla.addActionListener(this::btnVisaAllaActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tfSok, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSok)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnVisaAlla)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(tfSok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSok)
+                    .addComponent(btnVisaAlla))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSokActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSokActionPerformed
+        String sokText = tfSok.getText();
+        sokPersonal(sokText);
+    }//GEN-LAST:event_btnSokActionPerformed
+
+    private void btnVisaAllaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisaAllaActionPerformed
+        tfSok.setText("");
+        laddaPersonal();
+    }//GEN-LAST:event_btnVisaAllaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -66,9 +197,15 @@ public class Personal extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Personal().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new Personal().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSok;
+    private javax.swing.JButton btnVisaAlla;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblPersonal;
+    private javax.swing.JTextField tfSok;
     // End of variables declaration//GEN-END:variables
 }

@@ -230,7 +230,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnPersonalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPersonalActionPerformed
         // TODO add your handling code here:
-        Personal personal = new Personal();
+        Personal personal = new Personal(idb, aid);
         personal.setVisible(true);
     }//GEN-LAST:event_btnPersonalActionPerformed
 
