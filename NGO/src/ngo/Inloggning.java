@@ -50,10 +50,10 @@ public class Inloggning extends javax.swing.JFrame {
 
         lblLosenord.setText("Lösenord");
 
-        tfEPost.setText("ahmed.khan@example.com");
+        tfEPost.setText("maria.g@example.com");
         tfEPost.addActionListener(this::tfEPostActionPerformed);
 
-        tfLosenord.setText("password789");
+        tfLosenord.setText("password123");
 
         lblFelmeddelande.setForeground(new java.awt.Color(255, 0, 0));
         lblFelmeddelande.setText("Felaktig epost eller lösenord");
