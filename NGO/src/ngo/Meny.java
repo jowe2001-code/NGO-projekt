@@ -16,7 +16,8 @@ public class Meny extends javax.swing.JFrame {
     private InfDB idb;
     private String inloggadAnvandare;
     private String aid;
-    private boolean arAdmin = false; 
+    private boolean arAdmin = false;
+    private boolean arProjektledare = false;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Meny.class.getName());
 
@@ -52,6 +53,7 @@ public class Meny extends javax.swing.JFrame {
                     btnHanteraPartners.setVisible(false);
                     btnLänder.setVisible(false);
                     btnHanteraHållbarhetsmål.setVisible(false);
+                    arProjektledare = true;
                 } else{
                     lblRoll.setText("Handläggare");
                     lblHantera.setVisible(false);
