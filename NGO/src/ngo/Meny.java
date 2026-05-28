@@ -253,7 +253,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjektActionPerformed
         // TODO add your handling code here:
-        AdminProjekt adminProjekt = new AdminProjekt();
+        AdminProjekt adminProjekt = new AdminProjekt(idb, arAdmin, arProjektledare);
         adminProjekt.setVisible(true);
     }//GEN-LAST:event_btnProjektActionPerformed
 

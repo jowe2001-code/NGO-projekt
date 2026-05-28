@@ -4,18 +4,28 @@
  */
 package ngo;
 
+import oru.inf.InfDB;
+import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nikla
  */
 public class AdminProjekt extends javax.swing.JFrame {
-    
+    private InfDB idb;
+    private boolean arAdmin;
+    private boolean arProjektledare;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminProjekt.class.getName());
 
     /**
      * Creates new form AdminProjekt
      */
-    public AdminProjekt() {
+    public AdminProjekt(InfDB idb, boolean arAdmin, boolean arProjektledare) {
+        this.idb = idb;
+        this.arAdmin = arAdmin;
+        this.arProjektledare = arProjektledare;
+        
         initComponents();
     }
 
@@ -88,7 +98,7 @@ public class AdminProjekt extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AdminProjekt().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new AdminProjekt().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
