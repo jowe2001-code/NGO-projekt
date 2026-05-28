@@ -197,13 +197,15 @@ private void fyllTabell() {
             return;
             }
 
-            // Skapa e-post automatiskt utifrån för- och efternamn
-            epost = Validering.skapaEpost(fornamn, efternamn);
+           
             
             
             // Om aid är tomt är det en NY anställd
             if (aid.isEmpty()) {
-                // Om lösenord saknas, generera ett nytt
+                // Om lösenord saknas, generera ett nytt 
+                // Skapa e-post automatiskt utifrån för- och efternamn
+            epost = Validering.skapaEpost(fornamn, efternamn);
+            
                 if (losenord.isEmpty()) {
                     losenord = Validering.genereraLosenord();
                 }
