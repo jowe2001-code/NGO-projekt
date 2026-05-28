@@ -37,27 +37,36 @@ public class Meny extends javax.swing.JFrame {
             //kolla om användaren är admin
             String sqlAdmin = "SELECT aid FROM admin WHERE aid = " + aid;
             String behorighetsniva = idb.fetchSingle(sqlAdmin);
+            String projektchef = "SELECT projektchef FROM projekt WHERE projektchef = " + aid;
+            String projektledare = idb.fetchSingle(projektchef);
             
             if(behorighetsniva != null){
                 lblRoll.setText("Administratör");
                 arAdmin = true;
                 
             } else{
-                lblRoll.setText("Handläggare");
-                lblHantera.setVisible(false);
-                btnProjekt.setVisible(false);
-                btnAnställda.setVisible(false);
-                btnAvdelningar.setVisible(false);
-                btnHanteraPartners.setVisible(false);
-                btnLänder.setVisible(false);
-                btnHanteraHållbarhetsmål.setVisible(false);
-            }
+                if (projektledare != null){
+                    lblRoll.setText("Handläggare & Projektledare");
+                    btnAnställda.setVisible(false);
+                    btnAvdelningar.setVisible(false);
+                    btnHanteraPartners.setVisible(false);
+                    btnLänder.setVisible(false);
+                    btnHanteraHållbarhetsmål.setVisible(false);
+                } else{
+                    lblRoll.setText("Handläggare");
+                    lblHantera.setVisible(false);
+                    btnProjekt.setVisible(false);
+                    btnAnställda.setVisible(false);
+                    btnAvdelningar.setVisible(false);
+                    btnHanteraPartners.setVisible(false);
+                    btnLänder.setVisible(false);
+                    btnHanteraHållbarhetsmål.setVisible(false);
+                }
             
+            }
         }catch(InfException ex){
             System.out.println(ex.getMessage());
         }
-        
-        
     }
 
     /**
