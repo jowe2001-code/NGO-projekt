@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 public class AdminAnställda extends javax.swing.JFrame {
     private InfDB idb;
     private boolean arAdmin;
+    private ArrayList<String> bortagnaAid = new ArrayList<>();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAnställda.class.getName());
     
 
@@ -33,11 +34,12 @@ private void fyllTabell() {
     String[] kolumnNamn = {"ID", "Förnamn", "Efternamn", "Adress", "E-post", "Telefon", "Anst. datum", "Lösenord", "Avd. ID"};
         
         DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return arAdmin; 
-            }
-        };
+    @Override
+    public boolean isCellEditable(int row, int column) {
+    // Kolumn 0 (ID), kolumn 4 (E-post) och kolumn 7 (Lösenord) ska aldrig gå att redigera
+    return column != 0 && column != 4 && column != 7;
+}
+    };
         
         tblAnstallda.setModel(model);
         
@@ -81,6 +83,8 @@ private void fyllTabell() {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAnstallda = new javax.swing.JTable();
         btnSpara = new javax.swing.JButton();
+        btnTaBort = new javax.swing.JButton();
+        btnLaggTill = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -100,6 +104,12 @@ private void fyllTabell() {
         btnSpara.setText("Spara ändring");
         btnSpara.addActionListener(this::btnSparaActionPerformed);
 
+        btnTaBort.setText("Ta bort anställd");
+        btnTaBort.addActionListener(this::btnTaBortActionPerformed);
+
+        btnLaggTill.setText("Lägg till anställd");
+        btnLaggTill.addActionListener(this::btnLaggTillActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,9 +117,13 @@ private void fyllTabell() {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap()
+                        .addComponent(btnTaBort)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnLaggTill)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSpara))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1023, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -117,57 +131,149 @@ private void fyllTabell() {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSpara))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSpara)
+                    .addComponent(btnTaBort)
+                    .addComponent(btnLaggTill)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
-        // TODO add your handling code here:
-        // Tvinga tabellen att spara cellen om man precis skrivit i den
-        if (tblAnstallda.isEditing()) {
-            tblAnstallda.getCellEditor().stopCellEditing();
+    // Tvinga tabellen att spara cellen om man precis skrivit i den
+    if (tblAnstallda.isEditing()) {
+        tblAnstallda.getCellEditor().stopCellEditing();
+    }
+
+    DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
+    int antalRader = model.getRowCount();
+
+    try {
+        // Först - radera alla anställda som markerats för borttagning
+        for (String aid : bortagnaAid) {
+            String sqlTaBort = "DELETE FROM anstalld WHERE aid = " + aid;
+            idb.delete(sqlTaBort);
         }
+        bortagnaAid.clear();
 
-        DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
-        int antalRader = model.getRowCount();
+        // Gå igenom alla rader i tabellen
+        for (int i = 0; i < antalRader; i++) {
+            String aid = model.getValueAt(i, 0).toString();
+            String fornamn = model.getValueAt(i, 1).toString();
+            String efternamn = model.getValueAt(i, 2).toString();
+            String adress = model.getValueAt(i, 3).toString();
+            String epost = model.getValueAt(i, 4).toString();
+            String telefon = model.getValueAt(i, 5).toString();
+            String anstallningsdatum = model.getValueAt(i, 6).toString();
+            String losenord = model.getValueAt(i, 7).toString();
+            String avdelning = model.getValueAt(i, 8).toString();
 
-        try {
-            for (int i = 0; i < antalRader; i++) {
-                
-                String aid = model.getValueAt(i, 0).toString();
-                String fornamn = model.getValueAt(i, 1).toString();
-                String efternamn = model.getValueAt(i, 2).toString();
-                String adress = model.getValueAt(i, 3).toString();
-                String epost = model.getValueAt(i, 4).toString();
-                String telefon = model.getValueAt(i, 5).toString();
-                String anstallningsdatum = model.getValueAt(i, 6).toString();
-                String losenord = model.getValueAt(i, 7).toString();
-                String avdelning = model.getValueAt(i, 8).toString();
+            // VALIDERING av förnamn
+            if (!Validering.arGiltigtNamn(fornamn)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Förnamn. "
+                        + "Namnet får bara innehålla bokstäver.");
+                return;
+            }
 
-                // Observera att aid och avdelning är siffror i databasen, så de har inga ' ' runt sig
-                String sqlUppdatera = "UPDATE anstalld SET " +
-                        "fornamn = '" + fornamn + "', " +
-                        "efternamn = '" + efternamn + "', " +
-                        "adress = '" + adress + "', " +
-                        "epost = '" + epost + "', " +
-                        "telefon = '" + telefon + "', " +
-                        "anstallningsdatum = '" + anstallningsdatum + "', " +
-                        "losenord = '" + losenord + "', " +
-                        "avdelning = " + avdelning + " " +
-                        "WHERE aid = " + aid;
+            // VALIDERING av efternamn
+            if (!Validering.arGiltigtNamn(efternamn)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Efternamn. "
+                        + "Namnet får bara innehålla bokstäver.");
+                return;
+            }
 
+            // Formatera namnen med stor första bokstav
+            fornamn = Validering.storForstaBokstav(fornamn);
+            efternamn = Validering.storForstaBokstav(efternamn);
+
+            // VALIDERING av telefon
+            if (!Validering.arGiltigtTelefon(telefon)) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+            "Fel i rad " + (i + 1) + ", kolumnen Telefon. "
+            + "Telefonnumret får bara innehålla siffror och bindestreck.");
+            return;
+            }
+
+            // Skapa e-post automatiskt utifrån för- och efternamn
+            epost = Validering.skapaEpost(fornamn, efternamn);
+            
+            
+            // Om aid är tomt är det en NY anställd
+            if (aid.isEmpty()) {
+                // Om lösenord saknas, generera ett nytt
+                if (losenord.isEmpty()) {
+                    losenord = Validering.genereraLosenord();
+                }
+
+                String nyttAid = idb.getAutoIncrement("anstalld", "aid");
+
+                String sqlNy = "INSERT INTO anstalld (aid, fornamn, efternamn, adress, epost, "
+                        + "telefon, anstallningsdatum, losenord, avdelning) VALUES ("
+                        + nyttAid + ", '" + fornamn + "', '" + efternamn + "', '"
+                        + adress + "', '" + epost + "', '" + telefon + "', '"
+                        + anstallningsdatum + "', '" + losenord + "', " + avdelning + ")";
+                idb.insert(sqlNy);
+            } else {
+                // Befintlig anställd - uppdatera
+    // Om lösenord saknas, generera ett nytt även här
+    if (losenord.isEmpty()) {
+        losenord = Validering.genereraLosenord();
+    }
+                String sqlUppdatera = "UPDATE anstalld SET "
+                        + "fornamn = '" + fornamn + "', "
+                        + "efternamn = '" + efternamn + "', "
+                        + "adress = '" + adress + "', "
+                        + "epost = '" + epost + "', "
+                        + "telefon = '" + telefon + "', "
+                        + "anstallningsdatum = '" + anstallningsdatum + "', "
+                        + "losenord = '" + losenord + "', "
+                        + "avdelning = " + avdelning + " "
+                        + "WHERE aid = " + aid;
                 idb.update(sqlUppdatera);
             }
-            
-            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+        }
 
-        } catch (InfException ex) {
-            System.out.println("Fel vid uppdatering av anställda: " + ex.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att datum och avdelning har rätt format.");
-            }
+        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+        fyllTabell();
+
+    } catch (InfException ex) {
+        System.out.println("Fel vid sparande: " + ex.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this,
+                "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
+    }
     }//GEN-LAST:event_btnSparaActionPerformed
+
+    private void btnLaggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaggTillActionPerformed
+        // Lägg till en tom rad. aid lämnas tomt och fylls i automatiskt vid spara
+    DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
+    model.addRow(new Object[]{"", "", "", "", "", "", "", "", ""});
+    System.out.println("Ny rad tillagd! Antal rader nu: " + model.getRowCount());
+    }//GEN-LAST:event_btnLaggTillActionPerformed
+
+    private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
+        int valdRad = tblAnstallda.getSelectedRow();
+    
+    if (valdRad == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Markera en anställd att ta bort först.");
+        return;
+    }
+    
+    DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
+    
+    // Hämta aid för raden (om den har ett, dvs redan finns i databasen)
+    Object aidVarde = model.getValueAt(valdRad, 0);
+    
+    // Om raden har ett aid, spara det så vi kan radera det i databasen vid spara
+    if (aidVarde != null && !aidVarde.toString().isEmpty()) {
+        bortagnaAid.add(aidVarde.toString());
+    }
+    
+    // Ta bort raden från tabellen
+    model.removeRow(valdRad);
+    }//GEN-LAST:event_btnTaBortActionPerformed
 
     /**
      * @param args the command line arguments
@@ -195,7 +301,9 @@ private void fyllTabell() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLaggTill;
     private javax.swing.JButton btnSpara;
+    private javax.swing.JButton btnTaBort;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblAnstallda;
     // End of variables declaration//GEN-END:variables
