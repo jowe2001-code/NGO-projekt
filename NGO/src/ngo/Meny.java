@@ -16,7 +16,8 @@ public class Meny extends javax.swing.JFrame {
     private InfDB idb;
     private String inloggadAnvandare;
     private String aid;
-    private boolean arAdmin = false; 
+    private boolean arAdmin = false;
+    private boolean arProjektledare = false;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Meny.class.getName());
 
@@ -37,27 +38,37 @@ public class Meny extends javax.swing.JFrame {
             //kolla om användaren är admin
             String sqlAdmin = "SELECT aid FROM admin WHERE aid = " + aid;
             String behorighetsniva = idb.fetchSingle(sqlAdmin);
+            String projektchef = "SELECT projektchef FROM projekt WHERE projektchef = " + aid;
+            String projektledare = idb.fetchSingle(projektchef);
             
             if(behorighetsniva != null){
                 lblRoll.setText("Administratör");
                 arAdmin = true;
                 
             } else{
-                lblRoll.setText("Handläggare");
-                lblHantera.setVisible(false);
-                btnProjekt.setVisible(false);
-                btnAnställda.setVisible(false);
-                btnAvdelningar.setVisible(false);
-                btnHanteraPartners.setVisible(false);
-                btnLänder.setVisible(false);
-                btnHanteraHållbarhetsmål.setVisible(false);
-            }
+                if (projektledare != null){
+                    lblRoll.setText("Handläggare & Projektledare");
+                    btnAnställda.setVisible(false);
+                    btnAvdelningar.setVisible(false);
+                    btnHanteraPartners.setVisible(false);
+                    btnLänder.setVisible(false);
+                    btnHanteraHållbarhetsmål.setVisible(false);
+                    arProjektledare = true;
+                } else{
+                    lblRoll.setText("Handläggare");
+                    lblHantera.setVisible(false);
+                    btnProjekt.setVisible(false);
+                    btnAnställda.setVisible(false);
+                    btnAvdelningar.setVisible(false);
+                    btnHanteraPartners.setVisible(false);
+                    btnLänder.setVisible(false);
+                    btnHanteraHållbarhetsmål.setVisible(false);
+                }
             
+            }
         }catch(InfException ex){
             System.out.println(ex.getMessage());
         }
-        
-        
     }
 
     /**
@@ -242,7 +253,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjektActionPerformed
         // TODO add your handling code here:
-        AdminProjekt adminProjekt = new AdminProjekt();
+        AdminProjekt adminProjekt = new AdminProjekt(idb, arAdmin, arProjektledare);
         adminProjekt.setVisible(true);
     }//GEN-LAST:event_btnProjektActionPerformed
 
