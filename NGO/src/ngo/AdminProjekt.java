@@ -16,21 +16,25 @@ public class AdminProjekt extends javax.swing.JFrame {
     private InfDB idb;
     private boolean arAdmin;
     private boolean arProjektledare;
+    private String aid;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminProjekt.class.getName());
 
     /**
      * Creates new form AdminProjekt
      */
-    public AdminProjekt(InfDB idb, boolean arAdmin, boolean arProjektledare) {
+    public AdminProjekt(InfDB idb, boolean arAdmin, boolean arProjektledare, String aid) {
         this.idb = idb;
         this.arAdmin = arAdmin;
         this.arProjektledare = arProjektledare;
+        this.aid = aid;
         
         initComponents();
     }
 
     private void fyllTabell(boolean arAdmin, boolean arProjektledare)
     {
+        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum", "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+        
         if(arAdmin)
         {
             
