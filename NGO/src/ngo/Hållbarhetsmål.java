@@ -38,7 +38,12 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
     private void fyllTabell() 
     {
         String[] kolumnNamn = {"Nummer", "Namn", "Beskrivning", "Prioritet"};
-        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0);
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false; // Gör så att inga celler kan redigeras
+    }
+};
         
         tblHållbarhetsmål.setModel(model);
         

@@ -51,7 +51,12 @@ public class Personal extends javax.swing.JFrame {
             data[i][6] = personal.get(i).get("anstallningsdatum");
         }
 
-        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+});
 
     } catch (InfException ex) {
         System.out.println(ex.getMessage());
@@ -86,7 +91,12 @@ public class Personal extends javax.swing.JFrame {
             data[i][6] = personal.get(i).get("anstallningsdatum");
         }
 
-        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+});
 
     } catch (InfException ex) {
         System.out.println(ex.getMessage());

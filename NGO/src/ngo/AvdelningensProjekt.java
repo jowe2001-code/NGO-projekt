@@ -55,7 +55,12 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
             data[i][9] = projekt.get(i).get("namn");
         }
 
-        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+});
 
     } catch (InfException ex) {
         System.out.println(ex.getMessage());
@@ -104,7 +109,12 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
             data[i][9] = projekt.get(i).get("namn");
         }
 
-        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+});
 
     } catch (InfException ex) {
         System.out.println(ex.getMessage());
@@ -154,7 +164,12 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
             data[i][9] = projekt.get(i).get("namn");
         }
 
-        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false; // Gör så att inga celler kan redigeras
+    }
+    });
 
     } catch (InfException ex) {
         System.out.println(ex.getMessage());
