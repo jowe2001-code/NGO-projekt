@@ -29,6 +29,17 @@ public class AdminProjekt extends javax.swing.JFrame {
         initComponents();
     }
 
+    private void fyllTabell(boolean arAdmin, boolean arProjektledare)
+    {
+        if(arAdmin)
+        {
+            
+        }
+        else if(arProjektledare)
+        {
+            
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
