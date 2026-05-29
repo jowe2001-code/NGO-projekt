@@ -6,6 +6,8 @@ package ngo;
 
 import oru.inf.InfDB;
 import oru.inf.InfException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -29,19 +31,88 @@ public class AdminProjekt extends javax.swing.JFrame {
         this.aid = aid;
         
         initComponents();
+        
+        fyllTabell(arAdmin, arProjektledare);
     }
 
     private void fyllTabell(boolean arAdmin, boolean arProjektledare)
     {
         String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum", "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+        DefaultTableModel model = new DefaultTableModel(kolumner, 0);
+        tblAdminProjekt.setModel(model);
         
         if(arAdmin)
         {
-            
+            try 
+            {
+                String projekt = "SELECT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+                + "p.kostnad, p.status, p.prioritet, "
+                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
+                + "l.namn AS land "
+                + "FROM projekt p "
+                + "JOIN anstalld a ON p.projektchef = a.aid "
+                + "JOIN land l ON p.land = l.lid ";
+                
+                ArrayList<HashMap<String, String>> allaProjekt = idb.fetchRows(projekt);
+                
+                String[][] data = new String[allaProjekt.size()][10];
+
+                for (int i = 0; i < allaProjekt.size(); i++) 
+                {
+                    data[i][0] = allaProjekt.get(i).get("pid");
+                    data[i][1] = allaProjekt.get(i).get("projektnamn");
+                    data[i][2] = allaProjekt.get(i).get("beskrivning");
+                    data[i][3] = allaProjekt.get(i).get("startdatum");
+                    data[i][4] = allaProjekt.get(i).get("slutdatum");
+                    data[i][5] = allaProjekt.get(i).get("kostnad");
+                    data[i][6] = allaProjekt.get(i).get("status");
+                    data[i][7] = allaProjekt.get(i).get("prioritet");
+                    data[i][8] = allaProjekt.get(i).get("projektchef");
+                    data[i][9] = allaProjekt.get(i).get("namn");
+                }
+                tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+            }
+            catch(InfException ex) 
+            {
+                System.out.println(ex.getMessage());
+            }
         }
         else if(arProjektledare)
         {
-            
+            try 
+            {
+                String projekt = "SELECT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+                + "p.kostnad, p.status, p.prioritet, "
+                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
+                + "l.namn AS land "
+                + "FROM projekt p "
+                + "JOIN anstalld a ON p.projektchef = a.aid "
+                + "JOIN land l ON p.land = l.lid "
+                + "WHERE p.projektchef = '" + aid + "'";
+                
+                ArrayList<HashMap<String, String>> allaProjekt = idb.fetchRows(projekt);
+                
+                String[][] data = new String[allaProjekt.size()][10];
+
+                for (int i = 0; i < allaProjekt.size(); i++) 
+                {
+                    data[i][0] = allaProjekt.get(i).get("pid");
+                    data[i][1] = allaProjekt.get(i).get("projektnamn");
+                    data[i][2] = allaProjekt.get(i).get("beskrivning");
+                    data[i][3] = allaProjekt.get(i).get("startdatum");
+                    data[i][4] = allaProjekt.get(i).get("slutdatum");
+                    data[i][5] = allaProjekt.get(i).get("kostnad");
+                    data[i][6] = allaProjekt.get(i).get("status");
+                    data[i][7] = allaProjekt.get(i).get("prioritet");
+                    data[i][8] = allaProjekt.get(i).get("projektchef");
+                    data[i][9] = allaProjekt.get(i).get("namn");
+                }
+                tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
+            }
+            catch(InfException ex) 
+            {
+                System.out.println(ex.getMessage());
+            }
         }
     }
     /**
@@ -54,11 +125,11 @@ public class AdminProjekt extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblAdminProjekt = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -69,7 +140,7 @@ public class AdminProjekt extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblAdminProjekt);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -77,15 +148,15 @@ public class AdminProjekt extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1001, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -118,6 +189,6 @@ public class AdminProjekt extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblAdminProjekt;
     // End of variables declaration//GEN-END:variables
 }
