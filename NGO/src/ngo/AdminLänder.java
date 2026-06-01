@@ -4,12 +4,63 @@
  */
 package ngo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 /**
  *
  * @author nikla
  */
 public class AdminLänder extends javax.swing.JFrame {
-    
+    private InfDB idb;
+    private boolean arAdmin;
+
+    public AdminLänder(InfDB idb, boolean arAdmin) {
+        this.idb = idb;
+        this.arAdmin = arAdmin;
+        initComponents();
+        
+        fyllTabell();
+    }
+    private void fyllTabell() {
+        String[] kolumnNamn = {"ID", "Namn", "Språk", "Valuta", "Tidszon", "Politisk struktur", "Ekonomi"};
+        
+        // Vi måste nollställa modellen varje gång vi fyller den, 
+        // annars dubbleras raderna när vi lägger till ett nytt land och uppdaterar!
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return arAdmin && column != 0; // Kolumn 0 (ID) får ALDRIG ändras, databasen sköter ofta det!
+            }
+        };
+        
+        tblLander.setModel(model);
+        
+        try {
+            String sql = "SELECT * FROM land";
+            ArrayList<HashMap<String, String>> allaLander = idb.fetchRows(sql);
+            
+            if(allaLander != null) {
+                for(HashMap<String, String> rad : allaLander) {
+                    String[] dataRad = {
+                        rad.get("lid"),
+                        rad.get("namn"),
+                        rad.get("sprak"),
+                        rad.get("valuta"),
+                        rad.get("tidszon"),
+                        rad.get("politisk_struktur"),
+                        rad.get("ekonomi")
+                    };
+                    model.addRow(dataRad);
+                }
+            }
+        } catch(InfException ex) {
+            System.out.println("Fel vid hämtning av länder: " + ex.getMessage());
+        }
+    }
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminLänder.class.getName());
 
     /**
@@ -28,21 +79,64 @@ public class AdminLänder extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblLander = new javax.swing.JTable();
+        btnSpara = new javax.swing.JButton();
+        btnNyttLand = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        tblLander.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblLander);
+
+        btnSpara.setText("Spara ändring");
+        btnSpara.addActionListener(this::btnSparaActionPerformed);
+
+        btnNyttLand.setText("Lägg till");
+        btnNyttLand.addActionListener(this::btnNyttLandActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnNyttLand)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSpara)
+                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSpara)
+                    .addComponent(btnNyttLand)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNyttLandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNyttLandActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnNyttLandActionPerformed
+
+    private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -66,9 +160,13 @@ public class AdminLänder extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AdminLänder().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new AdminLänder().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnNyttLand;
+    private javax.swing.JButton btnSpara;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblLander;
     // End of variables declaration//GEN-END:variables
 }

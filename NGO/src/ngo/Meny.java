@@ -265,7 +265,7 @@ public class Meny extends javax.swing.JFrame {
 
     private void btnLänderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLänderActionPerformed
         // TODO add your handling code here:
-        AdminLänder adminLänder = new AdminLänder();
+        AdminLänder adminLänder = new AdminLänder(idb, arAdmin);
         adminLänder.setVisible(true);
     }//GEN-LAST:event_btnLänderActionPerformed
 
