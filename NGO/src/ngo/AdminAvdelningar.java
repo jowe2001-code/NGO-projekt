@@ -3,21 +3,65 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package ngo;
+import java.util.ArrayList;
+import java.util.HashMap;
+import oru.inf.InfDB;
+import oru.inf.InfException;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author nikla
  */
 public class AdminAvdelningar extends javax.swing.JFrame {
-    
+    private InfDB idb;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAvdelningar.class.getName());
 
     /**
      * Creates new form AdminAvdelningar
      */
-    public AdminAvdelningar() {
-        initComponents();
+    public AdminAvdelningar(InfDB idb) {
+    this.idb = idb;
+    initComponents();
+    fyllTabell();
+}
+    
+    private void fyllTabell() {
+    String[] kolumnNamn = {"ID", "Namn", "Beskrivning", "Adress", "E-post", "Telefon", "Stad", "Chef"};
+    
+    // Skapa modell där ID-kolumnen inte går att redigera
+    DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column != 0; // ID-kolumnen går inte att redigera
+        }
+    };
+    
+    tblAvdelningar.setModel(model);
+    
+    try {
+        String sql = "SELECT * FROM avdelning";
+        ArrayList<HashMap<String, String>> avdelningar = idb.fetchRows(sql);
+        
+        if (avdelningar != null) {
+            for (HashMap<String, String> rad : avdelningar) {
+                String[] dataRad = {
+                    rad.get("avdid"),
+                    rad.get("namn"),
+                    rad.get("beskrivning"),
+                    rad.get("adress"),
+                    rad.get("epost"),
+                    rad.get("telefon"),
+                    rad.get("stad"),
+                    rad.get("chef")
+                };
+                model.addRow(dataRad);
+            }
+        }
+    } catch (InfException ex) {
+        System.out.println("Fel vid hämtning av avdelningar: " + ex.getMessage());
     }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,21 +72,116 @@ public class AdminAvdelningar extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAvdelningar = new javax.swing.JTable();
+        btnSpara = new javax.swing.JButton();
+        btnLaggTill = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        tblAvdelningar.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblAvdelningar);
+
+        btnSpara.setText("Spara");
+        btnSpara.addActionListener(this::btnSparaActionPerformed);
+
+        btnLaggTill.setText("Lägg till avdelning");
+        btnLaggTill.addActionListener(this::btnLaggTillActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnLaggTill)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSpara)
+                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSpara)
+                    .addComponent(btnLaggTill))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLaggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaggTillActionPerformed
+        // Lägg till en tom rad. ID lämnas tomt och fylls i automatiskt vid spara
+    DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
+    model.addRow(new Object[]{"", "", "", "", "", "", "", ""});
+    }//GEN-LAST:event_btnLaggTillActionPerformed
+
+    private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
+        // Spara cellen om man precis skrivit i den
+    if (tblAvdelningar.isEditing()) {
+        tblAvdelningar.getCellEditor().stopCellEditing();
+    }
+
+    DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
+    int antalRader = model.getRowCount();
+
+    try {
+        for (int i = 0; i < antalRader; i++) {
+            String avdid = model.getValueAt(i, 0).toString();
+            String namn = model.getValueAt(i, 1).toString();
+            String beskrivning = model.getValueAt(i, 2).toString();
+            String adress = model.getValueAt(i, 3).toString();
+            String epost = model.getValueAt(i, 4).toString();
+            String telefon = model.getValueAt(i, 5).toString();
+            String stad = model.getValueAt(i, 6).toString();
+            String chef = model.getValueAt(i, 7).toString();
+
+            // Om ID är tomt är det en NY avdelning
+            if (avdid.isEmpty()) {
+                String nyttId = idb.getAutoIncrement("avdelning", "avdid");
+
+                String sqlNy = "INSERT INTO avdelning (avdid, namn, beskrivning, adress, epost, telefon, stad, chef) VALUES ("
+                        + nyttId + ", '" + namn + "', '" + beskrivning + "', '"
+                        + adress + "', '" + epost + "', '" + telefon + "', "
+                        + stad + ", " + chef + ")";
+                idb.insert(sqlNy);
+            } else {
+                // Befintlig avdelning - uppdatera
+                String sqlUppdatera = "UPDATE avdelning SET "
+                        + "namn = '" + namn + "', "
+                        + "beskrivning = '" + beskrivning + "', "
+                        + "adress = '" + adress + "', "
+                        + "epost = '" + epost + "', "
+                        + "telefon = '" + telefon + "', "
+                        + "stad = " + stad + ", "
+                        + "chef = " + chef + " "
+                        + "WHERE avdid = " + avdid;
+                idb.update(sqlUppdatera);
+            }
+        }
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+        fyllTabell();
+
+    } catch (InfException ex) {
+        System.out.println("Fel vid sparande: " + ex.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
+    }
+    }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -66,9 +205,13 @@ public class AdminAvdelningar extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new AdminAvdelningar().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new AdminAvdelningar().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLaggTill;
+    private javax.swing.JButton btnSpara;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblAvdelningar;
     // End of variables declaration//GEN-END:variables
 }
