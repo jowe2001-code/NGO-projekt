@@ -144,6 +144,7 @@ public class AdminProjekt extends javax.swing.JFrame {
         btnSparaÄndringar = new javax.swing.JButton();
         btnTaBort = new javax.swing.JButton();
         btnNyttProjekt = new javax.swing.JButton();
+        btnVisaPartners = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -169,6 +170,9 @@ public class AdminProjekt extends javax.swing.JFrame {
 
         btnNyttProjekt.setText("Nytt projekt");
 
+        btnVisaPartners.setText("Visa Partners");
+        btnVisaPartners.addActionListener(this::btnVisaPartnersActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -179,6 +183,8 @@ public class AdminProjekt extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1001, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnVisaHandläggare)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnVisaPartners)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnNyttProjekt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -190,6 +196,8 @@ public class AdminProjekt extends javax.swing.JFrame {
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnNyttProjekt, btnTaBort});
 
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnVisaHandläggare, btnVisaPartners});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -200,7 +208,8 @@ public class AdminProjekt extends javax.swing.JFrame {
                     .addComponent(btnVisaHandläggare)
                     .addComponent(btnSparaÄndringar)
                     .addComponent(btnTaBort)
-                    .addComponent(btnNyttProjekt))
+                    .addComponent(btnNyttProjekt)
+                    .addComponent(btnVisaPartners))
                 .addContainerGap())
         );
 
@@ -219,6 +228,19 @@ public class AdminProjekt extends javax.swing.JFrame {
 
         new HandläggareProjekt(idb, pid).setVisible(true);
     }//GEN-LAST:event_btnVisaHandläggareActionPerformed
+
+    private void btnVisaPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisaPartnersActionPerformed
+        int valdRad = tblAdminProjekt.getSelectedRow();
+
+        if (valdRad == -1) {
+            JOptionPane.showMessageDialog(this, "Välj ett projekt först");
+            return;
+        }
+
+        String pid = tblAdminProjekt.getValueAt(valdRad, 0).toString();
+
+        new PartnerProjekt(idb, pid).setVisible(true);
+    }//GEN-LAST:event_btnVisaPartnersActionPerformed
 
     /**
      * @param args the command line arguments
@@ -250,6 +272,7 @@ public class AdminProjekt extends javax.swing.JFrame {
     private javax.swing.JButton btnSparaÄndringar;
     private javax.swing.JButton btnTaBort;
     private javax.swing.JButton btnVisaHandläggare;
+    private javax.swing.JButton btnVisaPartners;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblAdminProjekt;
     // End of variables declaration//GEN-END:variables

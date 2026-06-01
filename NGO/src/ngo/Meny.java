@@ -270,9 +270,8 @@ public class Meny extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLänderActionPerformed
 
     private void btnAvdelningarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvdelningarActionPerformed
-        // TODO add your handling code here:
-        AdminLänder adminLänder = new AdminLänder();
-        adminLänder.setVisible(true);
+        AdminAvdelningar adminAvdelningar = new AdminAvdelningar(idb);
+        adminAvdelningar.setVisible(true);
     }//GEN-LAST:event_btnAvdelningarActionPerformed
 
     private void btnAnställdaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnställdaActionPerformed

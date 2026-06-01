@@ -28,7 +28,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane1" alignment="0" pref="1001" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="btnVisaHandläggare" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnVisaHandläggare" linkSize="2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnVisaPartners" linkSize="2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnNyttProjekt" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -52,6 +54,7 @@
                   <Component id="btnSparaÄndringar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnTaBort" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnNyttProjekt" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnVisaPartners" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -102,6 +105,14 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Nytt projekt"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnVisaPartners">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Visa Partners"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVisaPartnersActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
