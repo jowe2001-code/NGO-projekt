@@ -76,7 +76,7 @@ public class HandläggareProjekt extends javax.swing.JFrame {
         btnLäggTill = new javax.swing.JButton();
         btnTaBort = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         tblHandläggare.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
