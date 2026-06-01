@@ -9,6 +9,7 @@ import oru.inf.InfException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,7 +25,8 @@ public class AdminProjekt extends javax.swing.JFrame {
     /**
      * Creates new form AdminProjekt
      */
-    public AdminProjekt(InfDB idb, boolean arAdmin, boolean arProjektledare, String aid) {
+    public AdminProjekt(InfDB idb, boolean arAdmin, boolean arProjektledare, String aid) 
+    {
         this.idb = idb;
         this.arAdmin = arAdmin;
         this.arProjektledare = arProjektledare;
@@ -33,8 +35,20 @@ public class AdminProjekt extends javax.swing.JFrame {
         initComponents();
         
         fyllTabell(arAdmin, arProjektledare);
+        
+        if(arAdmin)
+        {
+            btnNyttProjekt.setVisible(true);
+            btnTaBort.setVisible(true);
+        }
+        else
+        {
+            btnNyttProjekt.setVisible(false);
+            btnTaBort.setVisible(false);
+        }
     }
 
+    //Fyll i tabellen som visar projekt på olika sätt beroende på om det är en admin eller projektledare som är inloggad
     private void fyllTabell(boolean arAdmin, boolean arProjektledare)
     {
         String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum", "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
@@ -147,6 +161,7 @@ public class AdminProjekt extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblAdminProjekt);
 
         btnVisaHandläggare.setText("Visa handläggare");
+        btnVisaHandläggare.addActionListener(this::btnVisaHandläggareActionPerformed);
 
         btnSparaÄndringar.setText("Spara");
 
@@ -191,6 +206,19 @@ public class AdminProjekt extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnVisaHandläggareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisaHandläggareActionPerformed
+        int valdRad = tblAdminProjekt.getSelectedRow();
+
+        if (valdRad == -1) {
+            JOptionPane.showMessageDialog(this, "Välj ett projekt först");
+            return;
+        }
+
+        String pid = tblAdminProjekt.getValueAt(valdRad, 0).toString();
+
+        new HandläggareProjekt(idb, pid).setVisible(true);
+    }//GEN-LAST:event_btnVisaHandläggareActionPerformed
 
     /**
      * @param args the command line arguments
