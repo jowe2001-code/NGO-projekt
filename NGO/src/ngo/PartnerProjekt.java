@@ -18,7 +18,7 @@ public class PartnerProjekt extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PartnerProjekt.class.getName());
     private InfDB idb;
     private String pid;
-    
+    private ArrayList<String> bortagnaPartnerPid = new ArrayList<>();
     /**
      * Creates new form PartnerProjekt
      */
@@ -32,33 +32,41 @@ public class PartnerProjekt extends javax.swing.JFrame {
     }
 
     private void fyllPartner()
+{
+    try 
     {
-        try 
-        {
-            String sql =
-            "SELECT p.namn " +
-            "FROM partner p " +
-            "JOIN projekt_partner pp ON p.pid = pp.partner_pid " +
-            "WHERE pp.pid = " + pid;
+        // Hämta alla partners kopplade till projektet
+        String sql =
+        "SELECT p.pid, p.namn " +
+        "FROM partner p " +
+        "JOIN projekt_partner pp ON p.pid = pp.partner_pid " +
+        "WHERE pp.pid = " + pid;
 
-            ArrayList<HashMap<String, String>> personer = idb.fetchRows(sql);
+        ArrayList<HashMap<String, String>> partners = idb.fetchRows(sql);
 
-            String[] kolumner = {"Namn"};
-            DefaultTableModel model = new DefaultTableModel(kolumner, 0);
-            tblPartner.setModel(model);
-
-            for (HashMap<String, String> person : personer)
-            {
-                model.addRow(new Object[]{
-                person.get("namn"),
-                });
+        String[] kolumner = {"ID", "Namn"};
+        // Skrivskydda alla celler - man lägger till/tar bort via knappar
+        DefaultTableModel model = new DefaultTableModel(kolumner, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
-        }
-        catch (InfException ex)
+        };
+        tblPartner.setModel(model);
+
+        for (HashMap<String, String> partner : partners)
         {
-            System.out.println(ex.getMessage());
+            model.addRow(new Object[]{
+                partner.get("pid"),
+                partner.get("namn")
+            });
         }
     }
+    catch (InfException ex)
+    {
+        System.out.println(ex.getMessage());
+    }
+}
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -73,6 +81,7 @@ public class PartnerProjekt extends javax.swing.JFrame {
         tblPartner = new javax.swing.JTable();
         btnLäggTill = new javax.swing.JButton();
         btnTaBort = new javax.swing.JButton();
+        btnSpara = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -90,8 +99,13 @@ public class PartnerProjekt extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblPartner);
 
         btnLäggTill.setText("Lägg till");
+        btnLäggTill.addActionListener(this::btnLäggTillActionPerformed);
 
         btnTaBort.setText("Ta bort");
+        btnTaBort.addActionListener(this::btnTaBortActionPerformed);
+
+        btnSpara.setText("Spara");
+        btnSpara.addActionListener(this::btnSparaActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -103,7 +117,9 @@ public class PartnerProjekt extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnTaBort)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLäggTill))
+                        .addComponent(btnLäggTill)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSpara))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -114,6 +130,7 @@ public class PartnerProjekt extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSpara)
                     .addComponent(btnLäggTill)
                     .addComponent(btnTaBort))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -121,6 +138,108 @@ public class PartnerProjekt extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLäggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLäggTillActionPerformed
+        // Be användaren skriva in partnerns ID
+    String partnerPidAttLaggaTill = javax.swing.JOptionPane.showInputDialog(this, 
+            "Skriv in ID-numret på partnern som ska läggas till:");
+    
+    // Om användaren tryckte avbryt eller skrev tomt - gör inget
+    if (partnerPidAttLaggaTill == null || partnerPidAttLaggaTill.isEmpty()) {
+        return;
+    }
+    
+    // Validera att det bara är siffror
+    if (!Validering.arEnbartSiffror(partnerPidAttLaggaTill)) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+                "ID måste vara ett nummer.");
+        return;
+    }
+    
+    try {
+        // Kolla att partnern finns i partner-tabellen
+        String sqlKolla = "SELECT pid FROM partner WHERE pid = " + partnerPidAttLaggaTill;
+        String finns = idb.fetchSingle(sqlKolla);
+        if (finns == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Det finns ingen partner med ID " + partnerPidAttLaggaTill + ".");
+            return;
+        }
+        
+        // Kolla att partnern inte redan är tilldelad projektet
+        String sqlRedan = "SELECT partner_pid FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidAttLaggaTill;
+        String redan = idb.fetchSingle(sqlRedan);
+        if (redan != null) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Partnern är redan tilldelad detta projekt.");
+            return;
+        }
+        
+        // Hämta partnerns namn och lägg till i tabellen
+        String sqlNamn = "SELECT namn FROM partner WHERE pid = " + partnerPidAttLaggaTill;
+        String namn = idb.fetchSingle(sqlNamn);
+        
+        DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
+        model.addRow(new Object[]{
+            partnerPidAttLaggaTill,
+            namn
+        });
+        
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+    }
+    }//GEN-LAST:event_btnLäggTillActionPerformed
+
+    private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
+    int valdRad = tblPartner.getSelectedRow();
+    
+    if (valdRad == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Markera en partner att ta bort först.");
+        return;
+    }
+    
+    DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
+    
+    // Spara partner-pid i listan över borttagna
+    String partnerPidAttTaBort = model.getValueAt(valdRad, 0).toString();
+    bortagnaPartnerPid.add(partnerPidAttTaBort);
+    
+    model.removeRow(valdRad);
+    }//GEN-LAST:event_btnTaBortActionPerformed
+
+    private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
+         try {
+        // Först - radera alla som markerats för borttagning
+        for (String partnerPidAttTaBort : bortagnaPartnerPid) {
+            String sqlTaBort = "DELETE FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidAttTaBort;
+            idb.delete(sqlTaBort);
+        }
+        bortagnaPartnerPid.clear();
+        
+        // Sedan - lägg till alla i tabellen som inte redan finns i databasen
+        DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String partnerPidIRad = model.getValueAt(i, 0).toString();
+            
+            // Kolla om kopplingen redan finns i databasen
+            String sqlKolla = "SELECT partner_pid FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidIRad;
+            String finns = idb.fetchSingle(sqlKolla);
+            
+            // Finns den inte, lägg till
+            if (finns == null) {
+                String sqlNy = "INSERT INTO projekt_partner (pid, partner_pid) VALUES (" + pid + ", " + partnerPidIRad + ")";
+                idb.insert(sqlNy);
+            }
+        }
+        
+        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+        fyllPartner();
+        
+    } catch (InfException ex) {
+        System.out.println(ex.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod vid sparande.");
+    }
+    }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -149,6 +268,7 @@ public class PartnerProjekt extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLäggTill;
+    private javax.swing.JButton btnSpara;
     private javax.swing.JButton btnTaBort;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblPartner;
