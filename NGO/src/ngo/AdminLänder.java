@@ -88,13 +88,13 @@ public class AdminLänder extends javax.swing.JFrame {
 
         tblLander.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7"
             }
         ));
         jScrollPane1.setViewportView(tblLander);
@@ -132,16 +132,76 @@ public class AdminLänder extends javax.swing.JFrame {
 
     private void btnNyttLandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNyttLandActionPerformed
         // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
+        
+        // Lägger till en ny, tom rad i tabellen (7 tomma fält för våra 7 kolumner)
+        // Vi lämnar ID-fältet tomt, det fylls i när vi sparar!
+        model.addRow(new Object[]{"", "", "", "", "", "", ""});
     }//GEN-LAST:event_btnNyttLandActionPerformed
 
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:                                       
+if (tblLander.isEditing()) {
+            tblLander.getCellEditor().stopCellEditing();
+        }
+
+        DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
+        int antalRader = model.getRowCount();
+
+        try {
+            for (int i = 0; i < antalRader; i++) {
+                
+                // Hämta alla fält från raden
+                String lid = model.getValueAt(i, 0).toString();
+                String namn = model.getValueAt(i, 1).toString();
+                String sprak = model.getValueAt(i, 2).toString();
+                String valuta = model.getValueAt(i, 3).toString();
+                String tidszon = model.getValueAt(i, 4).toString();
+                String politisk = model.getValueAt(i, 5).toString();
+                String ekonomi = model.getValueAt(i, 6).toString();
+
+                // Om ID-fältet är tomt (""), betyder det att vi nyss klickade på "Lägg till"
+                if(lid.isEmpty()) {
+                    
+                    // 1. Be databasklassen räkna ut nästa lediga ID
+                    String nyttId = idb.getAutoIncrement("land", "lid");
+                    
+                    // 2. Skapa en INSERT-fråga för det nya landet
+                    String sqlInsert = "INSERT INTO land VALUES (" +
+                            nyttId + ", '" + namn + "', '" + sprak + "', " + valuta + ", '" + 
+                            tidszon + "', '" + politisk + "', '" + ekonomi + "')";
+                    
+                    // 3. Spara det nya landet!
+                    idb.insert(sqlInsert);
+                    
+                    // 4. Uppdatera tabellen på skärmen så att det nya ID-numret syns direkt
+                    model.setValueAt(nyttId, i, 0);
+                    
+                } else {
+                    // Om ID redan fanns, gör vi en vanlig UPDATE precis som förut
+                    String sqlUppdatera = "UPDATE land SET " +
+                            "namn = '" + namn + "', " +
+                            "sprak = '" + sprak + "', " +
+                            "valuta = " + valuta + ", " + 
+                            "tidszon = '" + tidszon + "', " +
+                            "politisk_struktur = '" + politisk + "', " +
+                            "ekonomi = '" + ekonomi + "' " +
+                            "WHERE lid = " + lid;
+
+                    idb.update(sqlUppdatera);
+                }
+            }
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna och nya länder har sparats!");
+
+        } catch (InfException ex) {
+            System.out.println("Fel vid uppdatering av länder: " + ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Kunde inte spara. Kolla så att valutan skrivs med punkt (t.ex. 10.5).");        
     }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+   // public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -169,4 +229,5 @@ public class AdminLänder extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblLander;
     // End of variables declaration//GEN-END:variables
+
 }
