@@ -20,6 +20,7 @@ public class AdminProjekt extends javax.swing.JFrame {
     private boolean arAdmin;
     private boolean arProjektledare;
     private String aid;
+    private ArrayList<String> bortagnaProjekt = new ArrayList<>();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminProjekt.class.getName());
 
     /**
@@ -49,86 +50,89 @@ public class AdminProjekt extends javax.swing.JFrame {
     }
 
     //Fyll i tabellen som visar projekt på olika sätt beroende på om det är en admin eller projektledare som är inloggad
-    private void fyllTabell(boolean arAdmin, boolean arProjektledare)
+private void fyllTabell(boolean arAdmin, boolean arProjektledare)
+{
+    String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum", "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+    
+    if(arAdmin)
     {
-        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum", "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
-        DefaultTableModel model = new DefaultTableModel(kolumner, 0);
-        tblAdminProjekt.setModel(model);
-        
-        if(arAdmin)
+        try 
         {
-            try 
-            {
-                String projekt = "SELECT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
-                + "p.kostnad, p.status, p.prioritet, "
-                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
-                + "l.namn AS land "
-                + "FROM projekt p "
-                + "JOIN anstalld a ON p.projektchef = a.aid "
-                + "JOIN land l ON p.land = l.lid ";
-                
-                ArrayList<HashMap<String, String>> allaProjekt = idb.fetchRows(projekt);
-                
-                String[][] data = new String[allaProjekt.size()][10];
+            String projekt = "SELECT pid, projektnamn, beskrivning, startdatum, slutdatum, "
+                    + "kostnad, status, prioritet, projektchef, land "
+                    + "FROM projekt";
 
-                for (int i = 0; i < allaProjekt.size(); i++) 
-                {
-                    data[i][0] = allaProjekt.get(i).get("pid");
-                    data[i][1] = allaProjekt.get(i).get("projektnamn");
-                    data[i][2] = allaProjekt.get(i).get("beskrivning");
-                    data[i][3] = allaProjekt.get(i).get("startdatum");
-                    data[i][4] = allaProjekt.get(i).get("slutdatum");
-                    data[i][5] = allaProjekt.get(i).get("kostnad");
-                    data[i][6] = allaProjekt.get(i).get("status");
-                    data[i][7] = allaProjekt.get(i).get("prioritet");
-                    data[i][8] = allaProjekt.get(i).get("projektchef");
-                    data[i][9] = allaProjekt.get(i).get("namn");
-                }
-                tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
-            }
-            catch(InfException ex) 
+            ArrayList<HashMap<String, String>> allaProjekt = idb.fetchRows(projekt);
+
+            String[][] data = new String[allaProjekt.size()][10];
+
+            for (int i = 0; i < allaProjekt.size(); i++) 
             {
-                System.out.println(ex.getMessage());
+                data[i][0] = allaProjekt.get(i).get("pid");
+                data[i][1] = allaProjekt.get(i).get("projektnamn");
+                data[i][2] = allaProjekt.get(i).get("beskrivning");
+                data[i][3] = allaProjekt.get(i).get("startdatum");
+                data[i][4] = allaProjekt.get(i).get("slutdatum");
+                data[i][5] = allaProjekt.get(i).get("kostnad");
+                data[i][6] = allaProjekt.get(i).get("status");
+                data[i][7] = allaProjekt.get(i).get("prioritet");
+                data[i][8] = allaProjekt.get(i).get("projektchef");
+                data[i][9] = allaProjekt.get(i).get("land");
             }
+            
+            // Skrivskydda ID-kolumnen så användaren inte kan ändra den
+            tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return column != 0; // ID-kolumnen får inte redigeras
+                }
+            });
         }
-        else if(arProjektledare)
+        catch(InfException ex) 
         {
-            try 
-            {
-                String projekt = "SELECT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
-                + "p.kostnad, p.status, p.prioritet, "
-                + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
-                + "l.namn AS land "
-                + "FROM projekt p "
-                + "JOIN anstalld a ON p.projektchef = a.aid "
-                + "JOIN land l ON p.land = l.lid "
-                + "WHERE p.projektchef = '" + aid + "'";
-                
-                ArrayList<HashMap<String, String>> allaProjekt = idb.fetchRows(projekt);
-                
-                String[][] data = new String[allaProjekt.size()][10];
-
-                for (int i = 0; i < allaProjekt.size(); i++) 
-                {
-                    data[i][0] = allaProjekt.get(i).get("pid");
-                    data[i][1] = allaProjekt.get(i).get("projektnamn");
-                    data[i][2] = allaProjekt.get(i).get("beskrivning");
-                    data[i][3] = allaProjekt.get(i).get("startdatum");
-                    data[i][4] = allaProjekt.get(i).get("slutdatum");
-                    data[i][5] = allaProjekt.get(i).get("kostnad");
-                    data[i][6] = allaProjekt.get(i).get("status");
-                    data[i][7] = allaProjekt.get(i).get("prioritet");
-                    data[i][8] = allaProjekt.get(i).get("projektchef");
-                    data[i][9] = allaProjekt.get(i).get("namn");
-                }
-                tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner));
-            }
-            catch(InfException ex) 
-            {
-                System.out.println(ex.getMessage());
-            }
+            System.out.println(ex.getMessage());
         }
     }
+    else if(arProjektledare)
+    {
+        try 
+        {
+            String projekt = "SELECT pid, projektnamn, beskrivning, startdatum, slutdatum, "
+                    + "kostnad, status, prioritet, projektchef, land "
+                    + "FROM projekt WHERE projektchef = '" + aid + "'";
+
+            ArrayList<HashMap<String, String>> allaProjekt = idb.fetchRows(projekt);
+
+            String[][] data = new String[allaProjekt.size()][10];
+
+            for (int i = 0; i < allaProjekt.size(); i++) 
+            {
+                data[i][0] = allaProjekt.get(i).get("pid");
+                data[i][1] = allaProjekt.get(i).get("projektnamn");
+                data[i][2] = allaProjekt.get(i).get("beskrivning");
+                data[i][3] = allaProjekt.get(i).get("startdatum");
+                data[i][4] = allaProjekt.get(i).get("slutdatum");
+                data[i][5] = allaProjekt.get(i).get("kostnad");
+                data[i][6] = allaProjekt.get(i).get("status");
+                data[i][7] = allaProjekt.get(i).get("prioritet");
+                data[i][8] = allaProjekt.get(i).get("projektchef");
+                data[i][9] = allaProjekt.get(i).get("land");
+            }
+            
+            // Skrivskydda ID-kolumnen så användaren inte kan ändra den
+            tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return column != 0; // ID-kolumnen får inte redigeras
+                }
+            });
+        }
+        catch(InfException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -165,10 +169,13 @@ public class AdminProjekt extends javax.swing.JFrame {
         btnVisaHandläggare.addActionListener(this::btnVisaHandläggareActionPerformed);
 
         btnSparaÄndringar.setText("Spara");
+        btnSparaÄndringar.addActionListener(this::btnSparaÄndringarActionPerformed);
 
         btnTaBort.setText("Ta bort projekt");
+        btnTaBort.addActionListener(this::btnTaBortActionPerformed);
 
         btnNyttProjekt.setText("Nytt projekt");
+        btnNyttProjekt.addActionListener(this::btnNyttProjektActionPerformed);
 
         btnVisaPartners.setText("Visa Partners");
         btnVisaPartners.addActionListener(this::btnVisaPartnersActionPerformed);
@@ -241,6 +248,167 @@ public class AdminProjekt extends javax.swing.JFrame {
 
         new PartnerProjekt(idb, pid).setVisible(true);
     }//GEN-LAST:event_btnVisaPartnersActionPerformed
+
+    private void btnNyttProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNyttProjektActionPerformed
+        DefaultTableModel model = (DefaultTableModel) tblAdminProjekt.getModel();
+        model.addRow(new Object[]{"", "", "", "", "", "", "", "", "", ""});
+    }//GEN-LAST:event_btnNyttProjektActionPerformed
+
+    private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
+        int valdRad = tblAdminProjekt.getSelectedRow();
+    
+    if (valdRad == -1) {
+        JOptionPane.showMessageDialog(this, "Markera ett projekt att ta bort först.");
+        return;
+    }
+    
+    DefaultTableModel model = (DefaultTableModel) tblAdminProjekt.getModel();
+    
+    // Hämta pid för raden (om den redan finns i databasen)
+    Object pidVarde = model.getValueAt(valdRad, 0);
+    
+    if (pidVarde != null && !pidVarde.toString().isEmpty()) {
+        bortagnaProjekt.add(pidVarde.toString());
+    }
+    
+    model.removeRow(valdRad);
+    }//GEN-LAST:event_btnTaBortActionPerformed
+
+    private void btnSparaÄndringarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaÄndringarActionPerformed
+       // Spara cellen om man precis skrivit i den
+    if (tblAdminProjekt.isEditing()) {
+        tblAdminProjekt.getCellEditor().stopCellEditing();
+    }
+
+    DefaultTableModel model = (DefaultTableModel) tblAdminProjekt.getModel();
+    int antalRader = model.getRowCount();
+
+    try {
+        // Först - radera projekt som markerats för borttagning
+        for (String pid : bortagnaProjekt) {
+            String sqlTaBort = "DELETE FROM projekt WHERE pid = " + pid;
+            idb.delete(sqlTaBort);
+        }
+        bortagnaProjekt.clear();
+
+        // Gå igenom alla rader
+        for (int i = 0; i < antalRader; i++) {
+            String pid = model.getValueAt(i, 0).toString();
+            System.out.println("Rad " + i + " har pid: '" + pid + "'");
+            String projektnamn = model.getValueAt(i, 1).toString();
+            String beskrivning = model.getValueAt(i, 2).toString();
+            String startdatum = model.getValueAt(i, 3).toString();
+            String slutdatum = model.getValueAt(i, 4).toString();
+            String kostnad = model.getValueAt(i, 5).toString();
+            String status = model.getValueAt(i, 6).toString();
+            String prioritet = model.getValueAt(i, 7).toString();
+            String projektchef = model.getValueAt(i, 8).toString();
+            String land = model.getValueAt(i, 9).toString();
+
+            // VALIDERING - startdatum
+            if (!Validering.arGiltigtDatum(startdatum)) {
+                JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Startdatum. "
+                        + "Använd formatet YYYY-MM-DD.");
+                return;
+            }
+
+            // VALIDERING - slutdatum
+            if (!Validering.arGiltigtDatum(slutdatum)) {
+                JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Slutdatum. "
+                        + "Använd formatet YYYY-MM-DD.");
+                return;
+            }
+
+            // VALIDERING - projektchef måste vara en handläggare
+            String sqlKollaChef = "SELECT aid FROM handlaggare WHERE aid = " + projektchef;
+            String chefFinns = idb.fetchSingle(sqlKollaChef);
+            if (chefFinns == null) {
+            JOptionPane.showMessageDialog(this,
+            "Fel i rad " + (i + 1) + ", kolumnen Projektchef. "
+            + "Personen med ID " + projektchef + " är inte en handläggare och kan inte vara projektchef.");
+            return;
+            }
+
+            // VALIDERING - land måste vara en siffra (lid)
+            if (!Validering.arEnbartSiffror(land)) {
+                JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Land. "
+                        + "Ange landets ID-nummer (bara siffror).");
+                return;
+            }
+            
+            // VALIDERING - projektnamn får inte vara tomt
+if (projektnamn.isEmpty()) {
+    JOptionPane.showMessageDialog(this,
+            "Fel i rad " + (i + 1) + ", kolumnen Projektnamn. "
+            + "Projektnamnet får inte vara tomt.");
+    return;
+}
+
+// VALIDERING - kostnad måste vara en siffra (kan ha decimaler)
+try {
+    Double.parseDouble(kostnad);
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this,
+            "Fel i rad " + (i + 1) + ", kolumnen Kostnad. "
+            + "Kostnaden måste vara ett tal.");
+    return;
+}
+
+// VALIDERING - status måste vara giltigt
+if (!status.equals("Pågående") && !status.equals("Planerat") && !status.equals("Avslutat")) {
+    JOptionPane.showMessageDialog(this,
+            "Fel i rad " + (i + 1) + ", kolumnen Status. "
+            + "Status måste vara 'Pågående', 'Planerat' eller 'Avslutat'.");
+    return;
+}
+
+// VALIDERING - prioritet måste vara giltigt
+if (!prioritet.equals("Hög") && !prioritet.equals("Medel") && !prioritet.equals("Låg")) {
+    JOptionPane.showMessageDialog(this,
+            "Fel i rad " + (i + 1) + ", kolumnen Prioritet. "
+            + "Prioritet måste vara 'Hög', 'Medel' eller 'Låg'.");
+    return;
+}
+
+            // Om pid är tomt är det ett NYTT projekt
+            if (pid.isEmpty()) {
+                String nyttPid = idb.getAutoIncrement("projekt", "pid");
+
+                String sqlNy = "INSERT INTO projekt (pid, projektnamn, beskrivning, startdatum, "
+        + "slutdatum, kostnad, status, prioritet, projektchef, land) VALUES ("
+        + nyttPid + ", '" + projektnamn + "', '" + beskrivning + "', '"
+        + startdatum + "', '" + slutdatum + "', " + kostnad + ", '"
+        + status + "', '" + prioritet + "', " + projektchef + ", " + land + ")";
+System.out.println("INSERT: " + sqlNy);
+idb.insert(sqlNy);
+            } else {
+                // Befintligt projekt - uppdatera
+                String sqlUppdatera = "UPDATE projekt SET "
+                        + "projektnamn = '" + projektnamn + "', "
+                        + "beskrivning = '" + beskrivning + "', "
+                        + "startdatum = '" + startdatum + "', "
+                        + "slutdatum = '" + slutdatum + "', "
+                        + "kostnad = " + kostnad + ", "
+                        + "status = '" + status + "', "
+                        + "prioritet = '" + prioritet + "', "
+                        + "projektchef = " + projektchef + ", "
+                        + "land = " + land + " "
+                        + "WHERE pid = " + pid;
+                idb.update(sqlUppdatera);
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+        fyllTabell(arAdmin, arProjektledare);
+
+    } catch (InfException ex) {
+        System.out.println("Fel vid sparande: " + ex.getMessage());
+        JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
+    }
+    }//GEN-LAST:event_btnSparaÄndringarActionPerformed
 
     /**
      * @param args the command line arguments

@@ -118,7 +118,15 @@ public static String skapaEpost(String fornamn, String efternamn) {
     return fnamn + "." + enamn + "@example.com";
 }
 
-
+/**
+ * Kontrollerar att en sträng bara innehåller siffror
+ * @param text strängen som ska kontrolleras
+ * @return true om strängen bara innehåller siffror
+ */
+public static boolean arEnbartSiffror(String text) {
+    String regex = "^[0-9]+$";
+    return Pattern.matches(regex, text);
+}
 
 
     
