@@ -2,7 +2,7 @@
 
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -23,23 +23,17 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="1001" max="32767" attributes="0"/>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="btnVisaHandläggare" linkSize="2" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="btnTaBort" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnVisaPartners" linkSize="2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="btnNyttProjekt" linkSize="1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnTaBort" linkSize="1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnSparaÄndringar" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnLäggTill" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jScrollPane1" min="-2" pref="375" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -47,16 +41,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="470" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" min="-2" pref="275" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnVisaHandläggare" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnSparaÄndringar" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnLäggTill" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnTaBort" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnNyttProjekt" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnVisaPartners" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -69,7 +60,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tblAdminProjekt">
+        <Component class="javax.swing.JTable" name="tblPartner">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
@@ -83,36 +74,15 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btnVisaHandl&#xe4;ggare">
+    <Component class="javax.swing.JButton" name="btnL&#xe4;ggTill">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Visa handl&#xe4;ggare"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVisaHandl&#xe4;ggareActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnSpara&#xc4;ndringar">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Spara"/>
+        <Property name="text" type="java.lang.String" value="L&#xe4;gg till"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnTaBort">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Ta bort projekt"/>
+        <Property name="text" type="java.lang.String" value="Ta bort"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnNyttProjekt">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Nytt projekt"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnVisaPartners">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Visa Partners"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVisaPartnersActionPerformed"/>
-      </Events>
     </Component>
   </SubComponents>
 </Form>
