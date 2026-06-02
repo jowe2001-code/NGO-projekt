@@ -29,20 +29,25 @@ public class Partner extends javax.swing.JFrame {
         
         fyllTabell(); 
     }
-    //hämtar data från databasen och lägger in den i tabellen.
+    
+//hämtar data från databasen och lägger in den i tabellen.
     private void fyllTabell() {
 
         String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad", "land"};
         
-        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) 
+        {
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column) 
+            {
                 return false;
             }
         };
         
         tblPartners.setModel(model);
-        try {
+        
+        try 
+        {
             //Hämtar alla unika partners som är kopplade till projekt där en viss person (aid) är inblandad
             String sqlFraga = "SELECT DISTINCT partner.* FROM partner " +
                               "JOIN projekt_partner ON partner.pid = projekt_partner.partner_pid " +
@@ -51,17 +56,19 @@ public class Partner extends javax.swing.JFrame {
             
             ArrayList<HashMap<String, String>> relevantaPartners = idb.fetchRows(sqlFraga);
  
-       // Kontrollera databasen och retura resultat      
-if (relevantaPartners != null) {
+            // Kontrollera databasen och retura resultat      
+            if (relevantaPartners != null) 
+            {
                 // Loopa igenom varje partner
-                for (HashMap<String, String> rad : relevantaPartners) {
-                    
+                for (HashMap<String, String> rad : relevantaPartners) 
+                {                    
                     // Förbered variabler för stad och land
                     String stadId = rad.get("stad"); 
                     String stadNamn = "";
                     String landNamn = "";
                     
-                    if(stadId != null) {
+                    if(stadId != null) 
+                    {
                         // Hämta stads namn
                         String sqlStad = "SELECT namn FROM stad WHERE sid = " + stadId;
                         stadNamn = idb.fetchSingle(sqlStad);
@@ -71,7 +78,8 @@ if (relevantaPartners != null) {
                         String landId = idb.fetchSingle(sqlStadLandID);
                         
                         //hämta namn på land
-                        if(landId != null) {
+                        if(landId != null) 
+                        {
                             String sqlLand = "SELECT namn FROM land WHERE lid = " + landId;
                             landNamn = idb.fetchSingle(sqlLand);
                         }
@@ -92,7 +100,10 @@ if (relevantaPartners != null) {
                     model.addRow(dataRad);
                 }
             }
-        } catch (InfException ex) { // för att fångar upp och skriver ut eventuella databasfel
+        } 
+        catch (InfException ex) 
+        { 
+            // för att fångar upp och skriver ut eventuella databasfel
             System.out.println("Fel vid hämtning av relevanta partners: " + ex.getMessage());
         }
     }
