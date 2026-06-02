@@ -22,7 +22,7 @@ public class AdminAnställda extends javax.swing.JFrame {
     /**
      * Creates new form AdminAnställda
      */
-public AdminAnställda(InfDB idb, boolean arAdmin) {
+    public AdminAnställda(InfDB idb, boolean arAdmin) {
         this.idb = idb;
         this.arAdmin = arAdmin;
         initComponents();
@@ -30,28 +30,34 @@ public AdminAnställda(InfDB idb, boolean arAdmin) {
         fyllTabell();
     }
 
-private void fyllTabell() {
-    String[] kolumnNamn = {"ID", "Förnamn", "Efternamn", "Adress", "E-post", "Telefon", "Anst. datum", "Lösenord", "Avd. ID"};
+    //Fyller tabellen med alla anställda
+    private void fyllTabell() 
+    {
+        String[] kolumnNamn = {"ID", "Förnamn", "Efternamn", "Adress", "E-post", "Telefon", "Anst. datum", "Lösenord", "Avd. ID"};
         
-        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-    // Kolumn 0 (ID), kolumn 4 (E-post) och kolumn 7 (Lösenord) ska aldrig gå att redigera
-    return column != 0 && column != 4 && column != 7;
-}
-    };
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) 
+        {
+            @Override
+            public boolean isCellEditable(int row, int column) 
+            {
+                // Kolumn 0 (ID), kolumn 4 (E-post) och kolumn 7 (Lösenord) ska aldrig gå att redigera
+                return column != 0 && column != 4 && column != 7;
+            }
+        };
         
         tblAnstallda.setModel(model);
         
-        try {
-            // 2. Hämta datan från tabellen anstalld
+        try 
+        {
+            //Hämta datan från tabellen anstalld
             String sqlFraga = "SELECT * FROM anstalld";
             ArrayList<HashMap<String, String>> allaAnstallda = idb.fetchRows(sqlFraga);
             
-            if (allaAnstallda != null) {
-                for (HashMap<String, String> rad : allaAnstallda) {
-                    
-                    // 3. Matcha exakt mot hur kolumnerna stavas i DataGrip!
+            if (allaAnstallda != null) 
+            {
+                for (HashMap<String, String> rad : allaAnstallda) 
+                {                   
+                    //Matcha exakt mot hur kolumnerna stavas i DataGrip!
                     String[] dataRad = {
                         rad.get("aid"), 
                         rad.get("fornamn"), 
@@ -61,12 +67,14 @@ private void fyllTabell() {
                         rad.get("telefon"), 
                         rad.get("anstallningsdatum"), 
                         rad.get("losenord"), 
-                        rad.get("avdelning") // Just nu visar vi bara Avdelningens ID-siffra
+                        rad.get("avdelning")
                     };
                     model.addRow(dataRad);
                 }
             }
-        } catch (InfException ex) {
+        } 
+        catch (InfException ex) 
+        {
             System.out.println("Fel vid hämtning av anställda: " + ex.getMessage());
         }
     }
@@ -140,91 +148,102 @@ private void fyllTabell() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
     // Tvinga tabellen att spara cellen om man precis skrivit i den
-    if (tblAnstallda.isEditing()) {
-        tblAnstallda.getCellEditor().stopCellEditing();
-    }
-
-    DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
-    int antalRader = model.getRowCount();
-
-    try {
-        // Först - radera alla anställda som markerats för borttagning
-        for (String aid : bortagnaAid) {
-            String sqlTaBort = "DELETE FROM anstalld WHERE aid = " + aid;
-            idb.delete(sqlTaBort);
+    private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
+        if (tblAnstallda.isEditing()) 
+        {
+            tblAnstallda.getCellEditor().stopCellEditing();
         }
-        bortagnaAid.clear();
 
-        // Gå igenom alla rader i tabellen
-        for (int i = 0; i < antalRader; i++) {
-            String aid = model.getValueAt(i, 0).toString();
-            String fornamn = model.getValueAt(i, 1).toString();
-            String efternamn = model.getValueAt(i, 2).toString();
-            String adress = model.getValueAt(i, 3).toString();
-            String epost = model.getValueAt(i, 4).toString();
-            String telefon = model.getValueAt(i, 5).toString();
-            String anstallningsdatum = model.getValueAt(i, 6).toString();
-            String losenord = model.getValueAt(i, 7).toString();
-            String avdelning = model.getValueAt(i, 8).toString();
+        DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
+        int antalRader = model.getRowCount();
 
-            // VALIDERING av förnamn
-            if (!Validering.arGiltigtNamn(fornamn)) {
-                javax.swing.JOptionPane.showMessageDialog(this,
+        try 
+        {
+            // Först - radera alla anställda som markerats för borttagning
+            for (String aid : bortagnaAid) 
+            {
+                String sqlTaBort = "DELETE FROM anstalld WHERE aid = " + aid;
+                idb.delete(sqlTaBort);
+            }
+            bortagnaAid.clear();
+
+            // Gå igenom alla rader i tabellen
+            for (int i = 0; i < antalRader; i++) 
+            {
+                String aid = model.getValueAt(i, 0).toString();
+                String fornamn = model.getValueAt(i, 1).toString();
+                String efternamn = model.getValueAt(i, 2).toString();
+                String adress = model.getValueAt(i, 3).toString();
+                String epost = model.getValueAt(i, 4).toString();
+                String telefon = model.getValueAt(i, 5).toString();
+                String anstallningsdatum = model.getValueAt(i, 6).toString();
+                String losenord = model.getValueAt(i, 7).toString();
+                String avdelning = model.getValueAt(i, 8).toString();
+
+                // VALIDERING av förnamn
+                if (!Validering.arGiltigtNamn(fornamn)) 
+                {
+                    javax.swing.JOptionPane.showMessageDialog(this,
                         "Fel i rad " + (i + 1) + ", kolumnen Förnamn. "
                         + "Namnet får bara innehålla bokstäver.");
-                return;
-            }
-
-            // VALIDERING av efternamn
-            if (!Validering.arGiltigtNamn(efternamn)) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                        "Fel i rad " + (i + 1) + ", kolumnen Efternamn. "
-                        + "Namnet får bara innehålla bokstäver.");
-                return;
-            }
-
-            // Formatera namnen med stor första bokstav
-            fornamn = Validering.storForstaBokstav(fornamn);
-            efternamn = Validering.storForstaBokstav(efternamn);
-
-            // VALIDERING av telefon
-            if (!Validering.arGiltigtTelefon(telefon)) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-            "Fel i rad " + (i + 1) + ", kolumnen Telefon. "
-            + "Telefonnumret får bara innehålla siffror och bindestreck.");
-            return;
-            }
-
-           
-            
-            
-            // Om aid är tomt är det en NY anställd
-            if (aid.isEmpty()) {
-                // Om lösenord saknas, generera ett nytt 
-                // Skapa e-post automatiskt utifrån för- och efternamn
-            epost = Validering.skapaEpost(fornamn, efternamn);
-            
-                if (losenord.isEmpty()) {
-                    losenord = Validering.genereraLosenord();
+                    return;
                 }
 
-                String nyttAid = idb.getAutoIncrement("anstalld", "aid");
+                // VALIDERING av efternamn
+                if (!Validering.arGiltigtNamn(efternamn)) 
+                {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Efternamn. "
+                        + "Namnet får bara innehålla bokstäver.");
+                    return;
+                }
 
-                String sqlNy = "INSERT INTO anstalld (aid, fornamn, efternamn, adress, epost, "
+                // Formatera namnen med stor första bokstav
+                fornamn = Validering.storForstaBokstav(fornamn);
+                efternamn = Validering.storForstaBokstav(efternamn);
+
+                // VALIDERING av telefon
+                if (!Validering.arGiltigtTelefon(telefon)) 
+                {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Telefon. "
+                        + "Telefonnumret får bara innehålla siffror och bindestreck.");
+                    return;
+                }
+            
+                // Om aid är tomt är det en NY anställd
+                if (aid.isEmpty()) 
+                {
+                    // Om lösenord saknas, generera ett nytt 
+                    // Skapa e-post automatiskt utifrån för- och efternamn
+                    epost = Validering.skapaEpost(fornamn, efternamn);
+            
+                    if (losenord.isEmpty()) 
+                    {
+                        losenord = Validering.genereraLosenord();
+                    }
+
+                    String nyttAid = idb.getAutoIncrement("anstalld", "aid");
+
+                    String sqlNy = "INSERT INTO anstalld (aid, fornamn, efternamn, adress, epost, "
                         + "telefon, anstallningsdatum, losenord, avdelning) VALUES ("
                         + nyttAid + ", '" + fornamn + "', '" + efternamn + "', '"
                         + adress + "', '" + epost + "', '" + telefon + "', '"
                         + anstallningsdatum + "', '" + losenord + "', " + avdelning + ")";
-                idb.insert(sqlNy);
-            } else {
-                // Befintlig anställd - uppdatera
-    // Om lösenord saknas, generera ett nytt även här
-    if (losenord.isEmpty()) {
-        losenord = Validering.genereraLosenord();
-    }
-                String sqlUppdatera = "UPDATE anstalld SET "
+                    
+                    idb.insert(sqlNy);
+                }
+                else 
+                {
+                    // Befintlig anställd - uppdatera
+                    // Om lösenord saknas, generera ett nytt även här
+                    if (losenord.isEmpty()) 
+                    {
+                        losenord = Validering.genereraLosenord();
+                    }
+                    
+                    String sqlUppdatera = "UPDATE anstalld SET "
                         + "fornamn = '" + fornamn + "', "
                         + "efternamn = '" + efternamn + "', "
                         + "adress = '" + adress + "', "
@@ -234,47 +253,53 @@ private void fyllTabell() {
                         + "losenord = '" + losenord + "', "
                         + "avdelning = " + avdelning + " "
                         + "WHERE aid = " + aid;
-                idb.update(sqlUppdatera);
+                    
+                    idb.update(sqlUppdatera);
+                }
             }
-        }
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
-        fyllTabell();
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+            fyllTabell();
 
-    } catch (InfException ex) {
-        System.out.println("Fel vid sparande: " + ex.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this,
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println("Fel vid sparande: " + ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this,
                 "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
-    }
+        }
     }//GEN-LAST:event_btnSparaActionPerformed
 
+    // Lägg till en tom rad. aid lämnas tomt och fylls i automatiskt vid spara
     private void btnLaggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaggTillActionPerformed
-        // Lägg till en tom rad. aid lämnas tomt och fylls i automatiskt vid spara
-    DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
-    model.addRow(new Object[]{"", "", "", "", "", "", "", "", ""});
-    System.out.println("Ny rad tillagd! Antal rader nu: " + model.getRowCount());
+        DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
+        model.addRow(new Object[]{"", "", "", "", "", "", "", "", ""});
+        System.out.println("Ny rad tillagd! Antal rader nu: " + model.getRowCount());
     }//GEN-LAST:event_btnLaggTillActionPerformed
 
+    //Tar bort den markerade raden
     private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
         int valdRad = tblAnstallda.getSelectedRow();
     
-    if (valdRad == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Markera en anställd att ta bort först.");
-        return;
-    }
+        if (valdRad == -1) 
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "Markera en anställd att ta bort först.");
+            return;
+        }
     
-    DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblAnstallda.getModel();
     
-    // Hämta aid för raden (om den har ett, dvs redan finns i databasen)
-    Object aidVarde = model.getValueAt(valdRad, 0);
+        // Hämta aid för raden (om den har ett, dvs redan finns i databasen)
+        Object aidVarde = model.getValueAt(valdRad, 0);
     
-    // Om raden har ett aid, spara det så vi kan radera det i databasen vid spara
-    if (aidVarde != null && !aidVarde.toString().isEmpty()) {
-        bortagnaAid.add(aidVarde.toString());
-    }
+        // Om raden har ett aid, spara det så vi kan radera det i databasen vid spara
+        if (aidVarde != null && !aidVarde.toString().isEmpty()) 
+        {
+            bortagnaAid.add(aidVarde.toString());
+        }
     
-    // Ta bort raden från tabellen
-    model.removeRow(valdRad);
+        // Ta bort raden från tabellen
+        model.removeRow(valdRad);
     }//GEN-LAST:event_btnTaBortActionPerformed
 
     /**
