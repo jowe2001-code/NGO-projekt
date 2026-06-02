@@ -22,47 +22,56 @@ public class AdminAvdelningar extends javax.swing.JFrame {
      * Creates new form AdminAvdelningar
      */
     public AdminAvdelningar(InfDB idb) {
-    this.idb = idb;
-    initComponents();
-    fyllTabell();
-}
+        this.idb = idb;
+        initComponents();
+        fyllTabell();
+    }
+
+    //Fyller tabellen med alla avdelningar
+    private void fyllTabell() 
+    {
+        String[] kolumnNamn = {"ID", "Namn", "Beskrivning", "Adress", "E-post", "Telefon", "Stad", "Chef"};
     
-    private void fyllTabell() {
-    String[] kolumnNamn = {"ID", "Namn", "Beskrivning", "Adress", "E-post", "Telefon", "Stad", "Chef"};
+        // Skapa modell där ID-kolumnen inte går att redigera
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) 
+        {
+            @Override
+            public boolean isCellEditable(int row, int column) 
+            {
+                return column != 0; // ID-kolumnen går inte att redigera
+            }
+        };
     
-    // Skapa modell där ID-kolumnen inte går att redigera
-    DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column != 0; // ID-kolumnen går inte att redigera
-        }
-    };
+        tblAvdelningar.setModel(model);
     
-    tblAvdelningar.setModel(model);
-    
-    try {
-        String sql = "SELECT * FROM avdelning";
-        ArrayList<HashMap<String, String>> avdelningar = idb.fetchRows(sql);
+        try 
+        {
+            String sql = "SELECT * FROM avdelning";
+            ArrayList<HashMap<String, String>> avdelningar = idb.fetchRows(sql);
         
-        if (avdelningar != null) {
-            for (HashMap<String, String> rad : avdelningar) {
-                String[] dataRad = {
-                    rad.get("avdid"),
-                    rad.get("namn"),
-                    rad.get("beskrivning"),
-                    rad.get("adress"),
-                    rad.get("epost"),
-                    rad.get("telefon"),
-                    rad.get("stad"),
-                    rad.get("chef")
-                };
-                model.addRow(dataRad);
+            if (avdelningar != null) 
+            {
+                for (HashMap<String, String> rad : avdelningar) 
+                {
+                    String[] dataRad = {
+                        rad.get("avdid"),
+                        rad.get("namn"),
+                        rad.get("beskrivning"),
+                        rad.get("adress"),
+                        rad.get("epost"),
+                        rad.get("telefon"),
+                        rad.get("stad"),
+                        rad.get("chef")
+                    };
+                    model.addRow(dataRad);
+                }
             }
         }
-    } catch (InfException ex) {
-        System.out.println("Fel vid hämtning av avdelningar: " + ex.getMessage());
+        catch (InfException ex)
+        {
+            System.out.println("Fel vid hämtning av avdelningar: " + ex.getMessage());
+        }
     }
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -132,53 +141,59 @@ public class AdminAvdelningar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Lägg till en tom rad. ID lämnas tomt och fylls i automatiskt vid spara
     private void btnLaggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaggTillActionPerformed
-        // Lägg till en tom rad. ID lämnas tomt och fylls i automatiskt vid spara
-    DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
-    model.addRow(new Object[]{"", "", "", "", "", "", "", ""});
+        DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
+        model.addRow(new Object[]{"", "", "", "", "", "", "", ""});
     }//GEN-LAST:event_btnLaggTillActionPerformed
 
+    //Sparar eventuella ändringar som har gjorts till tabellen
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
         // Spara cellen om man precis skrivit i den
-    if (tblAvdelningar.isEditing()) {
-        tblAvdelningar.getCellEditor().stopCellEditing();
-    }
-
-    DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
-    int antalRader = model.getRowCount();
-
-    try {
-        
-        // Först - radera avdelningar som markerats för borttagning
-        for (String avdid : bortagnaAvdid) {
-        String sqlTaBort = "DELETE FROM avdelning WHERE avdid = " + avdid;
-        idb.delete(sqlTaBort);
+        if (tblAvdelningar.isEditing()) 
+        {
+            tblAvdelningar.getCellEditor().stopCellEditing();
         }
-         bortagnaAvdid.clear();
-        
-        
-        for (int i = 0; i < antalRader; i++) {
-            String avdid = model.getValueAt(i, 0).toString();
-            String namn = model.getValueAt(i, 1).toString();
-            String beskrivning = model.getValueAt(i, 2).toString();
-            String adress = model.getValueAt(i, 3).toString();
-            String epost = model.getValueAt(i, 4).toString();
-            String telefon = model.getValueAt(i, 5).toString();
-            String stad = model.getValueAt(i, 6).toString();
-            String chef = model.getValueAt(i, 7).toString();
 
-            // Om ID är tomt är det en NY avdelning
-            if (avdid.isEmpty()) {
-                String nyttId = idb.getAutoIncrement("avdelning", "avdid");
+        DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
+        int antalRader = model.getRowCount();
 
-                String sqlNy = "INSERT INTO avdelning (avdid, namn, beskrivning, adress, epost, telefon, stad, chef) VALUES ("
+        try
+        {       
+            // Först - radera avdelningar som markerats för borttagning
+            for (String avdid : bortagnaAvdid) 
+            {
+                String sqlTaBort = "DELETE FROM avdelning WHERE avdid = " + avdid;
+                idb.delete(sqlTaBort);
+            }
+            bortagnaAvdid.clear();       
+        
+            for (int i = 0; i < antalRader; i++) 
+            {
+                String avdid = model.getValueAt(i, 0).toString();
+                String namn = model.getValueAt(i, 1).toString();
+                String beskrivning = model.getValueAt(i, 2).toString();
+                String adress = model.getValueAt(i, 3).toString();
+                String epost = model.getValueAt(i, 4).toString();
+                String telefon = model.getValueAt(i, 5).toString();
+                String stad = model.getValueAt(i, 6).toString();
+                String chef = model.getValueAt(i, 7).toString();
+
+                // Om ID är tomt är det en NY avdelning
+                if (avdid.isEmpty()) 
+                {
+                    String nyttId = idb.getAutoIncrement("avdelning", "avdid");
+
+                    String sqlNy = "INSERT INTO avdelning (avdid, namn, beskrivning, adress, epost, telefon, stad, chef) VALUES ("
                         + nyttId + ", '" + namn + "', '" + beskrivning + "', '"
                         + adress + "', '" + epost + "', '" + telefon + "', "
                         + stad + ", " + chef + ")";
-                idb.insert(sqlNy);
-            } else {
-                // Befintlig avdelning - uppdatera
-                String sqlUppdatera = "UPDATE avdelning SET "
+                    idb.insert(sqlNy);
+                }
+                else
+                {
+                    // Befintlig avdelning - uppdatera
+                    String sqlUppdatera = "UPDATE avdelning SET "
                         + "namn = '" + namn + "', "
                         + "beskrivning = '" + beskrivning + "', "
                         + "adress = '" + adress + "', "
@@ -187,37 +202,42 @@ public class AdminAvdelningar extends javax.swing.JFrame {
                         + "stad = " + stad + ", "
                         + "chef = " + chef + " "
                         + "WHERE avdid = " + avdid;
-                idb.update(sqlUppdatera);
+                    idb.update(sqlUppdatera);
+                }
             }
+
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+            fyllTabell();
+
         }
-
-        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
-        fyllTabell();
-
-    } catch (InfException ex) {
-        System.out.println("Fel vid sparande: " + ex.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
-    }
+        catch (InfException ex)
+        {
+            System.out.println("Fel vid sparande: " + ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
+        }
     }//GEN-LAST:event_btnSparaActionPerformed
 
+    //Tar bort den markerade raden
     private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
         int valdRad = tblAvdelningar.getSelectedRow();
     
-    if (valdRad == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Markera en avdelning att ta bort först.");
-        return;
-    }
+        if (valdRad == -1)
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "Markera en avdelning att ta bort först.");
+            return;
+        }
     
-    DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
     
-    // Hämta avdid för raden (om den redan finns i databasen)
-    Object avdidVarde = model.getValueAt(valdRad, 0);
+        // Hämta avdid för raden (om den redan finns i databasen)
+        Object avdidVarde = model.getValueAt(valdRad, 0);
     
-    if (avdidVarde != null && !avdidVarde.toString().isEmpty()) {
-        bortagnaAvdid.add(avdidVarde.toString());
-    }
+        if (avdidVarde != null && !avdidVarde.toString().isEmpty())
+        {
+            bortagnaAvdid.add(avdidVarde.toString());
+        }
     
-    model.removeRow(valdRad);
+        model.removeRow(valdRad);
     }//GEN-LAST:event_btnTaBortActionPerformed
 
     /**
