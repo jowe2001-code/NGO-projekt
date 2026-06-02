@@ -17,12 +17,11 @@ public class Partner extends javax.swing.JFrame {
     
     private InfDB idb;
     private String aid;
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Partner.class.getName());
 
     /**
      * Creates new form Partner
      */
+    // Instansvariabler
     public Partner(InfDB idb, String aid) {
         this.idb = idb;
         this.aid = aid;
@@ -30,7 +29,7 @@ public class Partner extends javax.swing.JFrame {
         
         fyllTabell(); 
     }
-    
+    //hämtar data från databasen och lägger in den i tabellen.
     private void fyllTabell() {
 
         String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad", "land"};
@@ -44,34 +43,40 @@ public class Partner extends javax.swing.JFrame {
         
         tblPartners.setModel(model);
         try {
+            //Hämtar alla unika partners som är kopplade till projekt där en viss person (aid) är inblandad
             String sqlFraga = "SELECT DISTINCT partner.* FROM partner " +
                               "JOIN projekt_partner ON partner.pid = projekt_partner.partner_pid " +
                               "JOIN ans_proj ON projekt_partner.pid = ans_proj.pid " +
                               "WHERE ans_proj.aid = " + aid;
             
             ArrayList<HashMap<String, String>> relevantaPartners = idb.fetchRows(sqlFraga);
-            
+ 
+       // Kontrollera databasen och retura resultat      
 if (relevantaPartners != null) {
+                // Loopa igenom varje partner
                 for (HashMap<String, String> rad : relevantaPartners) {
                     
+                    // Förbered variabler för stad och land
                     String stadId = rad.get("stad"); 
                     String stadNamn = "";
                     String landNamn = "";
                     
                     if(stadId != null) {
+                        // Hämta stads namn
                         String sqlStad = "SELECT namn FROM stad WHERE sid = " + stadId;
                         stadNamn = idb.fetchSingle(sqlStad);
-                        
+                       
+                        // Hämta stad genom lid
                         String sqlStadLandID = "SELECT land FROM stad WHERE sid = " + stadId;
                         String landId = idb.fetchSingle(sqlStadLandID);
                         
+                        //hämta namn på land
                         if(landId != null) {
                             String sqlLand = "SELECT namn FROM land WHERE lid = " + landId;
                             landNamn = idb.fetchSingle(sqlLand);
                         }
                     }
-
-                   
+                    
                     String[] dataRad = {
                         rad.get("pid"), 
                         rad.get("namn"), 
@@ -87,7 +92,7 @@ if (relevantaPartners != null) {
                     model.addRow(dataRad);
                 }
             }
-        } catch (InfException ex) {
+        } catch (InfException ex) { // för att fångar upp och skriver ut eventuella databasfel
             System.out.println("Fel vid hämtning av relevanta partners: " + ex.getMessage());
         }
     }
@@ -144,31 +149,6 @@ if (relevantaPartners != null) {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-     //   java.awt.EventQueue.invokeLater(() -> new Partner().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
