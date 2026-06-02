@@ -17,49 +17,57 @@ public class ÄndraUppgifter extends javax.swing.JFrame {
     private String aid;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ÄndraUppgifter.class.getName());
 
-public ÄndraUppgifter(InfDB idb, String aid) {
-    this.idb = idb;
-    this.aid = aid;
-    initComponents();
-    // Gör förnamn, efternamn, aid, anställningsdatum och avdelning ej redigerbara
-    tfFornamn.setEditable(false);
-    tfEfternamn.setEditable(false);
-    tfAid.setEditable(false);
-    tfAnstallningsdatum.setEditable(false);
-    tfAvdelning.setEditable(false);
-    // Ladda användarens uppgifter
-    laddaUppgifter();
-}
+    /**
+     * Creates new form ÄndraUppgifter
+     */
+    public ÄndraUppgifter(InfDB idb, String aid) {
+        this.idb = idb;
+        this.aid = aid;
+        initComponents();
+    
+        // Gör förnamn, efternamn, aid, anställningsdatum och avdelning ej redigerbara
+        tfFornamn.setEditable(false);
+        tfEfternamn.setEditable(false);
+        tfAid.setEditable(false);
+        tfAnstallningsdatum.setEditable(false);
+        tfAvdelning.setEditable(false);
+        // Ladda användarens uppgifter
+        laddaUppgifter();
+    }
 
-private void laddaUppgifter() {
-    try {
-        // Hämta användarens uppgifter från databasen
-        // Vi joinar med avdelning för att få avdelningens namn
-        String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.adress, a.epost, "
+    //Hämta uppgifter beroende på vem som är inloggad
+    private void laddaUppgifter() 
+    {
+        try 
+        {
+            // Hämta användarens uppgifter från databasen
+            // Vi joinar med avdelning för att få avdelningens namn
+            String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.adress, a.epost, "
                 + "a.telefon, a.anstallningsdatum, a.losenord, av.namn AS avdelning "
                 + "FROM anstalld a "
                 + "JOIN avdelning av ON a.avdelning = av.avdid "
                 + "WHERE a.aid = " + aid;
         
-        HashMap<String, String> uppgifter = idb.fetchRow(sql);
+            HashMap<String, String> uppgifter = idb.fetchRow(sql);
         
-        // Fyll i alla textfält
-        tfAid.setText(uppgifter.get("aid"));
-        tfFornamn.setText(uppgifter.get("fornamn"));
-        tfEfternamn.setText(uppgifter.get("efternamn"));
-        tfAnstallningsdatum.setText(uppgifter.get("anstallningsdatum"));
-        tfAvdelning.setText(uppgifter.get("namn"));
+            // Fyll i alla textfält
+            tfAid.setText(uppgifter.get("aid"));
+            tfFornamn.setText(uppgifter.get("fornamn"));
+            tfEfternamn.setText(uppgifter.get("efternamn"));
+            tfAnstallningsdatum.setText(uppgifter.get("anstallningsdatum"));
+            tfAvdelning.setText(uppgifter.get("namn"));
         
-        // Dessa kan redigeras
-        tfAdress.setText(uppgifter.get("adress"));
-        tfEpost.setText(uppgifter.get("epost"));
-        tfTelefon.setText(uppgifter.get("telefon"));
-        tfLosenord.setText(uppgifter.get("losenord"));
-        
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
+            // Dessa kan redigeras
+            tfAdress.setText(uppgifter.get("adress"));
+            tfEpost.setText(uppgifter.get("epost"));
+            tfTelefon.setText(uppgifter.get("telefon"));
+            tfLosenord.setText(uppgifter.get("losenord"));       
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
     }
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -217,34 +225,35 @@ private void laddaUppgifter() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Spara eventuella ändringar som gjorts i textfälten
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
-
-    try {
-        // Hämta de nya värdena från textfälten
-        String nyAdress = tfAdress.getText();
-        String nyEpost = tfEpost.getText();
-        String nyTelefon = tfTelefon.getText();
-        String nyttLosenord = tfLosenord.getText();
+        try 
+        {
+            // Hämta de nya värdena från textfälten
+            String nyAdress = tfAdress.getText();
+            String nyEpost = tfEpost.getText();
+            String nyTelefon = tfTelefon.getText();
+            String nyttLosenord = tfLosenord.getText();
         
-        // SQL-fråga för att uppdatera användarens uppgifter
-        String sql = "UPDATE anstalld SET "
+            // SQL-fråga för att uppdatera användarens uppgifter
+            String sql = "UPDATE anstalld SET "
                 + "adress = '" + nyAdress + "', "
                 + "epost = '" + nyEpost + "', "
                 + "telefon = '" + nyTelefon + "', "
                 + "losenord = '" + nyttLosenord + "' "
                 + "WHERE aid = " + aid;
         
-        idb.update(sql);
+            idb.update(sql);
         
-        // Visa bekräftelse
-        lblMeddelande.setForeground(new java.awt.Color(0, 153, 0));
-        lblMeddelande.setText("Uppgifterna har sparats!");
-        
-    } catch (InfException ex) {
-        lblMeddelande.setForeground(new java.awt.Color(255, 0, 0));
-        lblMeddelande.setText("Något gick fel: " + ex.getMessage());
-    }
-
+            // Visa bekräftelse
+            lblMeddelande.setForeground(new java.awt.Color(0, 153, 0));
+            lblMeddelande.setText("Uppgifterna har sparats!");
+        } 
+        catch (InfException ex) 
+        {
+            lblMeddelande.setForeground(new java.awt.Color(255, 0, 0));
+            lblMeddelande.setText("Något gick fel: " + ex.getMessage());
+        }
     }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
