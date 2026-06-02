@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 /**
  *
- * @author nikla
+ * @author David
  */
 public class AdminLänder extends javax.swing.JFrame {
     private InfDB idb;
@@ -28,12 +28,11 @@ public class AdminLänder extends javax.swing.JFrame {
     private void fyllTabell() {
         String[] kolumnNamn = {"ID", "Namn", "Språk", "Valuta", "Tidszon", "Politisk struktur", "Ekonomi"};
         
-        // Vi måste nollställa modellen varje gång vi fyller den, 
-        // annars dubbleras raderna när vi lägger till ett nytt land och uppdaterar!
+        // Vi nollställer modellen varje gång vi fyller den för att undvika dublering vid till lägg av nytt land 
         DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return arAdmin && column != 0; // Kolumn 0 (ID) får ALDRIG ändras, databasen sköter ofta det!
+                return arAdmin && column != 0;
             }
         };
         
@@ -60,14 +59,6 @@ public class AdminLänder extends javax.swing.JFrame {
         } catch(InfException ex) {
             System.out.println("Fel vid hämtning av länder: " + ex.getMessage());
         }
-    }
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminLänder.class.getName());
-
-    /**
-     * Creates new form AdminLänder
-     */
-    public AdminLänder() {
-        initComponents();
     }
 
     /**
@@ -99,10 +90,10 @@ public class AdminLänder extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblLander);
 
-        btnSpara.setText("Spara ändring");
+        btnSpara.setText("Spara");
         btnSpara.addActionListener(this::btnSparaActionPerformed);
 
-        btnNyttLand.setText("Lägg till");
+        btnNyttLand.setText("Lägg till land");
         btnNyttLand.addActionListener(this::btnNyttLandActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -134,8 +125,7 @@ public class AdminLänder extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
         
-        // Lägger till en ny, tom rad i tabellen (7 tomma fält för våra 7 kolumner)
-        // Vi lämnar ID-fältet tomt, det fylls i när vi sparar!
+        // Lägger till en tom ny rad i tabellen
         model.addRow(new Object[]{"", "", "", "", "", "", ""});
     }//GEN-LAST:event_btnNyttLandActionPerformed
 
@@ -160,25 +150,25 @@ if (tblLander.isEditing()) {
                 String politisk = model.getValueAt(i, 5).toString();
                 String ekonomi = model.getValueAt(i, 6).toString();
 
-                // Om ID-fältet är tomt (""), betyder det att vi nyss klickade på "Lägg till"
+                // om ID-fältet är tomt, betyder "Lägg till" kanppen har används
                 if(lid.isEmpty()) {
                     
-                    // 1. Be databasklassen räkna ut nästa lediga ID
+                    // Räkna nästa lediga id
                     String nyttId = idb.getAutoIncrement("land", "lid");
                     
-                    // 2. Skapa en INSERT-fråga för det nya landet
+                    // INSERT fråga nytt landet
                     String sqlInsert = "INSERT INTO land VALUES (" +
                             nyttId + ", '" + namn + "', '" + sprak + "', " + valuta + ", '" + 
                             tidszon + "', '" + politisk + "', '" + ekonomi + "')";
                     
-                    // 3. Spara det nya landet!
+                    // Spara nytt land
                     idb.insert(sqlInsert);
                     
-                    // 4. Uppdatera tabellen på skärmen så att det nya ID-numret syns direkt
+                    // Uppdatera tabellen
                     model.setValueAt(nyttId, i, 0);
                     
                 } else {
-                    // Om ID redan fanns, gör vi en vanlig UPDATE precis som förut
+                    // Om ID finns
                     String sqlUppdatera = "UPDATE land SET " +
                             "namn = '" + namn + "', " +
                             "sprak = '" + sprak + "', " +
@@ -198,29 +188,6 @@ if (tblLander.isEditing()) {
             javax.swing.JOptionPane.showMessageDialog(this, "Kunde inte spara. Kolla så att valutan skrivs med punkt (t.ex. 10.5).");        
     }//GEN-LAST:event_btnSparaActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-   // public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        //java.awt.EventQueue.invokeLater(() -> new AdminLänder().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
