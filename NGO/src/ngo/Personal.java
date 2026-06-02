@@ -26,82 +26,90 @@ public class Personal extends javax.swing.JFrame {
     laddaPersonal();
     }
 
-    
-    private void laddaPersonal() {
-    try {
-        // Hämta all personal på samma avdelning som inloggad användare
-        String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.epost, a.telefon, "
+    // Hämta all personal på samma avdelning som inloggad användare
+    private void laddaPersonal() 
+    {
+        try 
+        {            
+            String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.epost, a.telefon, "
                 + "a.adress, a.anstallningsdatum "
                 + "FROM anstalld a "
                 + "WHERE a.avdelning = (SELECT avdelning FROM anstalld WHERE aid = " + aid + ")";
 
-        ArrayList<HashMap<String, String>> personal = idb.fetchRows(sql);
+            ArrayList<HashMap<String, String>> personal = idb.fetchRows(sql);
 
-        String[] kolumner = {"ID", "Förnamn", "Efternamn", "E-post", "Telefon", "Adress", "Anställningsdatum"};
+            String[] kolumner = {"ID", "Förnamn", "Efternamn", "E-post", "Telefon", "Adress", "Anställningsdatum"};
 
-        String[][] data = new String[personal.size()][7];
+            String[][] data = new String[personal.size()][7];
 
-        for (int i = 0; i < personal.size(); i++) {
-            data[i][0] = personal.get(i).get("aid");
-            data[i][1] = personal.get(i).get("fornamn");
-            data[i][2] = personal.get(i).get("efternamn");
-            data[i][3] = personal.get(i).get("epost");
-            data[i][4] = personal.get(i).get("telefon");
-            data[i][5] = personal.get(i).get("adress");
-            data[i][6] = personal.get(i).get("anstallningsdatum");
+            for (int i = 0; i < personal.size(); i++) {
+                data[i][0] = personal.get(i).get("aid");
+                data[i][1] = personal.get(i).get("fornamn");
+                data[i][2] = personal.get(i).get("efternamn");
+                data[i][3] = personal.get(i).get("epost");
+                data[i][4] = personal.get(i).get("telefon");
+                data[i][5] = personal.get(i).get("adress");
+                data[i][6] = personal.get(i).get("anstallningsdatum");
+            }
+
+            tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) 
+                {
+                    return false;
+                }
+            });
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
         }
-
-        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
     }
-});
-
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
-}
     
-    
-    private void sokPersonal(String sokText) {
-    try {
-        // Söker på handläggare där namn eller e-post matchar söktexten
-        String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.epost, a.telefon, "
-        + "a.adress, a.anstallningsdatum "
-        + "FROM anstalld a "
-        + "WHERE a.avdelning = (SELECT avdelning FROM anstalld WHERE aid = " + aid + ") "
-        + "AND (a.fornamn LIKE '%" + sokText + "%' "
-        + "OR a.efternamn LIKE '%" + sokText + "%' "
-        + "OR a.epost LIKE '%" + sokText + "%')";
+    // Söker på handläggare där namn eller e-post matchar söktexten
+    private void sokPersonal(String sokText) 
+    {
+        try 
+        {        
+            String sql = "SELECT a.aid, a.fornamn, a.efternamn, a.epost, a.telefon, "
+                + "a.adress, a.anstallningsdatum "
+                + "FROM anstalld a "
+                + "WHERE a.avdelning = (SELECT avdelning FROM anstalld WHERE aid = " + aid + ") "
+                + "AND (a.fornamn LIKE '%" + sokText + "%' "
+                + "OR a.efternamn LIKE '%" + sokText + "%' "
+                + "OR a.epost LIKE '%" + sokText + "%')";
 
-        ArrayList<HashMap<String, String>> personal = idb.fetchRows(sql);
+            ArrayList<HashMap<String, String>> personal = idb.fetchRows(sql);
 
-        String[] kolumner = {"ID", "Förnamn", "Efternamn", "E-post", "Telefon", "Adress", "Anställningsdatum"};
+            String[] kolumner = {"ID", "Förnamn", "Efternamn", "E-post", "Telefon", "Adress", "Anställningsdatum"};
 
-        String[][] data = new String[personal.size()][7];
+            String[][] data = new String[personal.size()][7];
 
-        for (int i = 0; i < personal.size(); i++) {
-            data[i][0] = personal.get(i).get("aid");
-            data[i][1] = personal.get(i).get("fornamn");
-            data[i][2] = personal.get(i).get("efternamn");
-            data[i][3] = personal.get(i).get("epost");
-            data[i][4] = personal.get(i).get("telefon");
-            data[i][5] = personal.get(i).get("adress");
-            data[i][6] = personal.get(i).get("anstallningsdatum");
+            for (int i = 0; i < personal.size(); i++) {
+                data[i][0] = personal.get(i).get("aid");
+                data[i][1] = personal.get(i).get("fornamn");
+                data[i][2] = personal.get(i).get("efternamn");
+                data[i][3] = personal.get(i).get("epost");
+                data[i][4] = personal.get(i).get("telefon");
+                data[i][5] = personal.get(i).get("adress");
+                data[i][6] = personal.get(i).get("anstallningsdatum");
+            }
+
+            tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) 
+                {
+                    return false;
+                }
+            });
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
         }
-
-        tblPersonal.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
     }
-});
-
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
-}
     
     
     /**
@@ -175,11 +183,13 @@ public class Personal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //När sök-knappen trycks så körs sokPersonal() beroende på vad som står i sökfältet
     private void btnSokActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSokActionPerformed
         String sokText = tfSok.getText();
         sokPersonal(sokText);
     }//GEN-LAST:event_btnSokActionPerformed
 
+    //Visar all personal
     private void btnVisaAllaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisaAllaActionPerformed
         tfSok.setText("");
         laddaPersonal();
