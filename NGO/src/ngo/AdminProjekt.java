@@ -81,9 +81,11 @@ private void fyllTabell(boolean arAdmin, boolean arProjektledare)
             }
             
             // Skrivskydda ID-kolumnen så användaren inte kan ändra den
-            tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+            tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int row, int column) 
+                {
                     return column != 0; // ID-kolumnen får inte redigeras
                 }
             });
@@ -120,9 +122,11 @@ private void fyllTabell(boolean arAdmin, boolean arProjektledare)
             }
             
             // Skrivskydda ID-kolumnen så användaren inte kan ändra den
-            tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
+            tblAdminProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
                 @Override
-                public boolean isCellEditable(int row, int column) {
+                public boolean isCellEditable(int row, int column) 
+                {
                     return column != 0; // ID-kolumnen får inte redigeras
                 }
             });
@@ -222,7 +226,8 @@ private void fyllTabell(boolean arAdmin, boolean arProjektledare)
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    //Öppnar ett nytt fönster för att visa det markerade projektets handläggare
     private void btnVisaHandläggareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisaHandläggareActionPerformed
         int valdRad = tblAdminProjekt.getSelectedRow();
 
@@ -235,7 +240,8 @@ private void fyllTabell(boolean arAdmin, boolean arProjektledare)
 
         new HandläggareProjekt(idb, pid).setVisible(true);
     }//GEN-LAST:event_btnVisaHandläggareActionPerformed
-
+    
+    //Öppnar ett nytt fönster för att visa det markerade projektets partners
     private void btnVisaPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVisaPartnersActionPerformed
         int valdRad = tblAdminProjekt.getSelectedRow();
 
@@ -248,12 +254,14 @@ private void fyllTabell(boolean arAdmin, boolean arProjektledare)
 
         new PartnerProjekt(idb, pid).setVisible(true);
     }//GEN-LAST:event_btnVisaPartnersActionPerformed
-
+    
+    //Lägger till en ny rad för att skapa ett nytt projekt
     private void btnNyttProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNyttProjektActionPerformed
         DefaultTableModel model = (DefaultTableModel) tblAdminProjekt.getModel();
         model.addRow(new Object[]{"", "", "", "", "", "", "", "", "", ""});
     }//GEN-LAST:event_btnNyttProjektActionPerformed
-
+    
+    //Tar bort den markerade raden 
     private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
         int valdRad = tblAdminProjekt.getSelectedRow();
     
@@ -274,140 +282,143 @@ private void fyllTabell(boolean arAdmin, boolean arProjektledare)
     model.removeRow(valdRad);
     }//GEN-LAST:event_btnTaBortActionPerformed
 
+    //Sparar eventuella ändringar som har gjorts till tabellen
     private void btnSparaÄndringarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaÄndringarActionPerformed
        // Spara cellen om man precis skrivit i den
-    if (tblAdminProjekt.isEditing()) {
-        tblAdminProjekt.getCellEditor().stopCellEditing();
-    }
+        if (tblAdminProjekt.isEditing()) 
+        {
+            tblAdminProjekt.getCellEditor().stopCellEditing();
+        }
 
-    DefaultTableModel model = (DefaultTableModel) tblAdminProjekt.getModel();
-    int antalRader = model.getRowCount();
+        DefaultTableModel model = (DefaultTableModel) tblAdminProjekt.getModel();
+        int antalRader = model.getRowCount();
 
-    try {
+        try 
+        {
         // Först - radera projekt som markerats för borttagning
-        for (String pid : bortagnaProjekt) {
-            String sqlTaBort = "DELETE FROM projekt WHERE pid = " + pid;
-            idb.delete(sqlTaBort);
-        }
-        bortagnaProjekt.clear();
-
-        // Gå igenom alla rader
-        for (int i = 0; i < antalRader; i++) {
-            String pid = model.getValueAt(i, 0).toString();
-            System.out.println("Rad " + i + " har pid: '" + pid + "'");
-            String projektnamn = model.getValueAt(i, 1).toString();
-            String beskrivning = model.getValueAt(i, 2).toString();
-            String startdatum = model.getValueAt(i, 3).toString();
-            String slutdatum = model.getValueAt(i, 4).toString();
-            String kostnad = model.getValueAt(i, 5).toString();
-            String status = model.getValueAt(i, 6).toString();
-            String prioritet = model.getValueAt(i, 7).toString();
-            String projektchef = model.getValueAt(i, 8).toString();
-            String land = model.getValueAt(i, 9).toString();
-
-            // VALIDERING - startdatum
-            if (!Validering.arGiltigtDatum(startdatum)) {
-                JOptionPane.showMessageDialog(this,
-                        "Fel i rad " + (i + 1) + ", kolumnen Startdatum. "
-                        + "Använd formatet YYYY-MM-DD.");
-                return;
+            for (String pid : bortagnaProjekt) 
+            {
+                String sqlTaBort = "DELETE FROM projekt WHERE pid = " + pid;
+                idb.delete(sqlTaBort);
             }
+            bortagnaProjekt.clear();
 
-            // VALIDERING - slutdatum
-            if (!Validering.arGiltigtDatum(slutdatum)) {
-                JOptionPane.showMessageDialog(this,
-                        "Fel i rad " + (i + 1) + ", kolumnen Slutdatum. "
-                        + "Använd formatet YYYY-MM-DD.");
-                return;
-            }
+            // Gå igenom alla rader
+            for (int i = 0; i < antalRader; i++) 
+            {
+                String pid = model.getValueAt(i, 0).toString();
+                System.out.println("Rad " + i + " har pid: '" + pid + "'");
+                String projektnamn = model.getValueAt(i, 1).toString();
+                String beskrivning = model.getValueAt(i, 2).toString();
+                String startdatum = model.getValueAt(i, 3).toString();
+                String slutdatum = model.getValueAt(i, 4).toString();
+                String kostnad = model.getValueAt(i, 5).toString();
+                String status = model.getValueAt(i, 6).toString();
+                String prioritet = model.getValueAt(i, 7).toString();
+                String projektchef = model.getValueAt(i, 8).toString();
+                String land = model.getValueAt(i, 9).toString();
 
-            // VALIDERING - projektchef måste vara en handläggare
-            String sqlKollaChef = "SELECT aid FROM handlaggare WHERE aid = " + projektchef;
-            String chefFinns = idb.fetchSingle(sqlKollaChef);
-            if (chefFinns == null) {
-            JOptionPane.showMessageDialog(this,
-            "Fel i rad " + (i + 1) + ", kolumnen Projektchef. "
-            + "Personen med ID " + projektchef + " är inte en handläggare och kan inte vara projektchef.");
-            return;
-            }
+                // VALIDERING - startdatum
+                if (!Validering.arGiltigtDatum(startdatum)) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Startdatum. " + "Använd formatet YYYY-MM-DD.");
+                    return;
+                }
 
-            // VALIDERING - land måste vara en siffra (lid)
-            if (!Validering.arEnbartSiffror(land)) {
-                JOptionPane.showMessageDialog(this,
-                        "Fel i rad " + (i + 1) + ", kolumnen Land. "
-                        + "Ange landets ID-nummer (bara siffror).");
-                return;
-            }
+                // VALIDERING - slutdatum
+                if (!Validering.arGiltigtDatum(slutdatum)) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Slutdatum. " + "Använd formatet YYYY-MM-DD.");
+                    return;
+                }
+
+                // VALIDERING - projektchef måste vara en handläggare
+                String sqlKollaChef = "SELECT aid FROM handlaggare WHERE aid = " + projektchef;
+                String chefFinns = idb.fetchSingle(sqlKollaChef);
+                if (chefFinns == null) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Projektchef. " + "Personen med ID " + projektchef + " är inte en handläggare och kan inte vara projektchef.");
+                    return;
+                }
+
+                // VALIDERING - land måste vara en siffra (lid)
+                if (!Validering.arEnbartSiffror(land)) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Land. " + "Ange landets ID-nummer (bara siffror).");
+                    return;
+                }
             
-            // VALIDERING - projektnamn får inte vara tomt
-if (projektnamn.isEmpty()) {
-    JOptionPane.showMessageDialog(this,
-            "Fel i rad " + (i + 1) + ", kolumnen Projektnamn. "
-            + "Projektnamnet får inte vara tomt.");
-    return;
-}
+                // VALIDERING - projektnamn får inte vara tomt
+                if (projektnamn.isEmpty()) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Projektnamn. " + "Projektnamnet får inte vara tomt.");
+                    return;
+                }
 
-// VALIDERING - kostnad måste vara en siffra (kan ha decimaler)
-try {
-    Double.parseDouble(kostnad);
-} catch (NumberFormatException e) {
-    JOptionPane.showMessageDialog(this,
-            "Fel i rad " + (i + 1) + ", kolumnen Kostnad. "
-            + "Kostnaden måste vara ett tal.");
-    return;
-}
+                   // VALIDERING - kostnad måste vara en siffra (kan ha decimaler)
+                try 
+                {
+                    Double.parseDouble(kostnad);
+                }
+                catch (NumberFormatException e) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Kostnad. " + "Kostnaden måste vara ett tal.");
+                    return;
+                }
 
-// VALIDERING - status måste vara giltigt
-if (!status.equals("Pågående") && !status.equals("Planerat") && !status.equals("Avslutat")) {
-    JOptionPane.showMessageDialog(this,
-            "Fel i rad " + (i + 1) + ", kolumnen Status. "
-            + "Status måste vara 'Pågående', 'Planerat' eller 'Avslutat'.");
-    return;
-}
+                // VALIDERING - status måste vara giltigt
+                if (!status.equals("Pågående") && !status.equals("Planerat") && !status.equals("Avslutat")) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Status. " + "Status måste vara 'Pågående', 'Planerat' eller 'Avslutat'.");
+                    return;
+                }
 
-// VALIDERING - prioritet måste vara giltigt
-if (!prioritet.equals("Hög") && !prioritet.equals("Medel") && !prioritet.equals("Låg")) {
-    JOptionPane.showMessageDialog(this,
-            "Fel i rad " + (i + 1) + ", kolumnen Prioritet. "
-            + "Prioritet måste vara 'Hög', 'Medel' eller 'Låg'.");
-    return;
-}
+                // VALIDERING - prioritet måste vara giltigt
+                if (!prioritet.equals("Hög") && !prioritet.equals("Medel") && !prioritet.equals("Låg")) 
+                {
+                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Prioritet. " + "Prioritet måste vara 'Hög', 'Medel' eller 'Låg'.");
+                    return;
+                }
 
-            // Om pid är tomt är det ett NYTT projekt
-            if (pid.isEmpty()) {
-                String nyttPid = idb.getAutoIncrement("projekt", "pid");
+                // Om pid är tomt är det ett NYTT projekt
+                if (pid.isEmpty()) 
+                {
+                    String nyttPid = idb.getAutoIncrement("projekt", "pid");
 
-                String sqlNy = "INSERT INTO projekt (pid, projektnamn, beskrivning, startdatum, "
-        + "slutdatum, kostnad, status, prioritet, projektchef, land) VALUES ("
-        + nyttPid + ", '" + projektnamn + "', '" + beskrivning + "', '"
-        + startdatum + "', '" + slutdatum + "', " + kostnad + ", '"
-        + status + "', '" + prioritet + "', " + projektchef + ", " + land + ")";
-System.out.println("INSERT: " + sqlNy);
-idb.insert(sqlNy);
-            } else {
-                // Befintligt projekt - uppdatera
-                String sqlUppdatera = "UPDATE projekt SET "
-                        + "projektnamn = '" + projektnamn + "', "
-                        + "beskrivning = '" + beskrivning + "', "
-                        + "startdatum = '" + startdatum + "', "
-                        + "slutdatum = '" + slutdatum + "', "
-                        + "kostnad = " + kostnad + ", "
-                        + "status = '" + status + "', "
-                        + "prioritet = '" + prioritet + "', "
-                        + "projektchef = " + projektchef + ", "
-                        + "land = " + land + " "
-                        + "WHERE pid = " + pid;
-                idb.update(sqlUppdatera);
+                    String sqlNy = "INSERT INTO projekt (pid, projektnamn, beskrivning, startdatum, "
+                    + "slutdatum, kostnad, status, prioritet, projektchef, land) VALUES ("
+                    + nyttPid + ", '" + projektnamn + "', '" + beskrivning + "', '"
+                    + startdatum + "', '" + slutdatum + "', " + kostnad + ", '"
+                    + status + "', '" + prioritet + "', " + projektchef + ", " + land + ")";
+                    System.out.println("INSERT: " + sqlNy);
+                    idb.insert(sqlNy);
+                }
+                else 
+                {
+                    // Befintligt projekt - uppdatera
+                    String sqlUppdatera = "UPDATE projekt SET "
+                    + "projektnamn = '" + projektnamn + "', "
+                    + "beskrivning = '" + beskrivning + "', "
+                    + "startdatum = '" + startdatum + "', "
+                    + "slutdatum = '" + slutdatum + "', "
+                    + "kostnad = " + kostnad + ", "
+                    + "status = '" + status + "', "
+                    + "prioritet = '" + prioritet + "', "
+                    + "projektchef = " + projektchef + ", "
+                    + "land = " + land + " "
+                    + "WHERE pid = " + pid;
+                    idb.update(sqlUppdatera);
+                }
             }
+
+            JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+            fyllTabell(arAdmin, arProjektledare);
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println("Fel vid sparande: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
         }
-
-        JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
-        fyllTabell(arAdmin, arProjektledare);
-
-    } catch (InfException ex) {
-        System.out.println("Fel vid sparande: " + ex.getMessage());
-        JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
-    }
     }//GEN-LAST:event_btnSparaÄndringarActionPerformed
 
     /**
