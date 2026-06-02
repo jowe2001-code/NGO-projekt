@@ -25,6 +25,7 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
         initComponents();
         
         fyllTabell();
+        //Ändrar bredden på kolumner
         tblHållbarhetsmål.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
 
         var colModel = tblHållbarhetsmål.getColumnModel();
@@ -35,25 +36,29 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
         colModel.getColumn(3).setPreferredWidth(75);
     }
 
+    //Fyll tabellen med alla mål
     private void fyllTabell() 
     {
         String[] kolumnNamn = {"Nummer", "Namn", "Beskrivning", "Prioritet"};
-        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false; // Gör så att inga celler kan redigeras
-    }
-};
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) 
+        {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Gör så att inga celler kan redigeras
+            }
+        };
         
         tblHållbarhetsmål.setModel(model);
         
-        try {
+        try 
+        {
             String mål = "SELECT malnummer, namn, beskrivning, prioritet FROM hallbarhetsmal";
             java.util.ArrayList<java.util.HashMap<String, String>> allaMål = idb.fetchRows(mål);
             
-            if (allaMål != null){
-                for (java.util.HashMap<String, String> rad : allaMål) {
-                    
+            if (allaMål != null)
+            {
+                for (java.util.HashMap<String, String> rad : allaMål) 
+                {                    
                     String[] dataRad = {
                         rad.get("malnummer"),
                         rad.get("namn"),
@@ -63,7 +68,9 @@ public class Hållbarhetsmål extends javax.swing.JFrame {
                     model.addRow(dataRad);
                 }
             }
-        } catch (InfException ex) {
+        } 
+        catch (InfException ex) 
+        {
             System.out.println("Fel vid hämtning av hållbarhetsmål: " + ex.getMessage());
         }
     }
