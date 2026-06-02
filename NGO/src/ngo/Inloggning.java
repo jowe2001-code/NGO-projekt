@@ -51,7 +51,6 @@ public class Inloggning extends javax.swing.JFrame {
         lblLosenord.setText("Lösenord");
 
         tfEPost.setText("maria.g@example.com");
-        tfEPost.addActionListener(this::tfEPostActionPerformed);
 
         tfLosenord.setText("password123");
 
@@ -105,32 +104,31 @@ public class Inloggning extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //När logga in knappen trycks kontrolleras att rätt email och lösenord är skrivet
     private void btnLoggainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoggainActionPerformed
-        
         String ePost = tfEPost.getText();
         String losen = tfLosenord.getText();
         
-        try{
+        try
+        {
             String sqlFraga = "SELECT losenord FROM anstalld WHERE epost = '" + ePost + "'";
             System.out.println(sqlFraga);
             String dbLosen = idb.fetchSingle(sqlFraga);
-            if(losen.equals(dbLosen)){
+            if(losen.equals(dbLosen))
+            {
                 new Meny(idb, ePost).setVisible(true);
                 this.setVisible(false);
             }
-            else{
+            else
+            {
                 lblFelmeddelande.setVisible(true);
             }
-            
-        }catch(InfException ex){
-            System.out.println(ex.getMessage());
         }
-        
+        catch(InfException ex)
+        {
+            System.out.println(ex.getMessage());
+        }        
     }//GEN-LAST:event_btnLoggainActionPerformed
-
-    private void tfEPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfEPostActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfEPostActionPerformed
 
     /**
      * @param args the command line arguments
