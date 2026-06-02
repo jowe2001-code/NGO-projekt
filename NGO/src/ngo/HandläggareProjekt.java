@@ -32,42 +32,44 @@ public class HandläggareProjekt extends javax.swing.JFrame {
         fyllHandläggare();
     }
     
+    //Fyll i tabellen som visar vilka handläggare som arbetar på projektet som valdes
     private void fyllHandläggare()
-{
-    try 
     {
-        String sql =
-        "SELECT a.aid, a.fornamn, a.efternamn " +
-        "FROM anstalld a " +
-        "JOIN ans_proj ap ON a.aid = ap.aid " +
-        "WHERE ap.pid = " + pid;
-
-        ArrayList<HashMap<String, String>> personer = idb.fetchRows(sql);
-
-        String[] kolumner = {"ID", "Förnamn", "Efternamn"};
-        // Skrivskydda alla kolumner utom ID (som man fyller i för att lägga till)
-        DefaultTableModel model = new DefaultTableModel(kolumner, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Inga celler kan redigeras - man lägger till/tar bort via knappar
-            }
-        };
-        tblHandläggare.setModel(model);
-
-        for (HashMap<String, String> person : personer)
+        try 
         {
-            model.addRow(new Object[]{
+            String sql =
+            "SELECT a.aid, a.fornamn, a.efternamn " + "FROM anstalld a " +
+            "JOIN ans_proj ap ON a.aid = ap.aid " + "WHERE ap.pid = " + pid;
+
+            ArrayList<HashMap<String, String>> personer = idb.fetchRows(sql);
+
+            String[] kolumner = {"ID", "Förnamn", "Efternamn"};
+        
+            // Skrivskydda alla kolumner utom ID (som man fyller i för att lägga till)
+            DefaultTableModel model = new DefaultTableModel(kolumner, 0) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) 
+                {
+                    return false; // Inga celler kan redigeras - man lägger till/tar bort via knappar
+                }
+            };
+            tblHandläggare.setModel(model);
+
+            for (HashMap<String, String> person : personer)
+            {
+                model.addRow(new Object[]{
                 person.get("aid"),
                 person.get("fornamn"),
                 person.get("efternamn")
-            });
+                });
+            }
+        }
+        catch (InfException ex)
+        {
+            System.out.println(ex.getMessage());
         }
     }
-    catch (InfException ex)
-    {
-        System.out.println(ex.getMessage());
-    }
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -146,107 +148,120 @@ public class HandläggareProjekt extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Lägg till en rad för att lägga till handläggare
     private void btnLäggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLäggTillActionPerformed
          // Be användaren skriva in handläggarens aid
-    String aidAttLaggaTill = javax.swing.JOptionPane.showInputDialog(this, 
-            "Skriv in ID-numret på handläggaren som ska läggas till:");
+        String aidAttLaggaTill = javax.swing.JOptionPane.showInputDialog(this, "Skriv in ID-numret på handläggaren som ska läggas till:");
     
-    // Om användaren tryckte avbryt eller skrev tomt - gör inget
-    if (aidAttLaggaTill == null || aidAttLaggaTill.isEmpty()) {
-        return;
-    }
-    
-    // Validera att det bara är siffror
-    if (!Validering.arEnbartSiffror(aidAttLaggaTill)) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-                "ID måste vara ett nummer.");
-        return;
-    }
-    
-    try {
-        // Kolla att personen finns i handlaggare-tabellen
-        String sqlKolla = "SELECT aid FROM handlaggare WHERE aid = " + aidAttLaggaTill;
-        String finns = idb.fetchSingle(sqlKolla);
-        if (finns == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Personen med ID " + aidAttLaggaTill + " är inte en handläggare.");
+        // Om användaren tryckte avbryt eller skrev tomt - gör inget
+        if (aidAttLaggaTill == null || aidAttLaggaTill.isEmpty()) 
+        {
             return;
         }
-        
-        // Kolla att personen inte redan är tilldelad projektet
-        String sqlRedan = "SELECT aid FROM ans_proj WHERE pid = " + pid + " AND aid = " + aidAttLaggaTill;
-        String redan = idb.fetchSingle(sqlRedan);
-        if (redan != null) {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Handläggaren är redan tilldelad detta projekt.");
+    
+        // Validera att det bara är siffror
+        if (!Validering.arEnbartSiffror(aidAttLaggaTill)) 
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "ID måste vara ett nummer.");
             return;
         }
+    
+        try 
+        {
+            // Kolla att personen finns i handlaggare-tabellen
+            String sqlKolla = "SELECT aid FROM handlaggare WHERE aid = " + aidAttLaggaTill;
+            String finns = idb.fetchSingle(sqlKolla);
+            if (finns == null) 
+            {
+                javax.swing.JOptionPane.showMessageDialog(this, "Personen med ID " + aidAttLaggaTill + " är inte en handläggare.");
+                return;
+            }
         
-        // Hämta namn och lägg till i tabellen
-        String sqlNamn = "SELECT fornamn, efternamn FROM anstalld WHERE aid = " + aidAttLaggaTill;
-        HashMap<String, String> person = idb.fetchRow(sqlNamn);
+            // Kolla att personen inte redan är tilldelad projektet
+            String sqlRedan = "SELECT aid FROM ans_proj WHERE pid = " + pid + " AND aid = " + aidAttLaggaTill;
+            String redan = idb.fetchSingle(sqlRedan);
+            if (redan != null) 
+            {
+                javax.swing.JOptionPane.showMessageDialog(this, "Handläggaren är redan tilldelad detta projekt.");
+                return;
+            }
         
-        DefaultTableModel model = (DefaultTableModel) tblHandläggare.getModel();
-        model.addRow(new Object[]{
-            aidAttLaggaTill,
-            person.get("fornamn"),
-            person.get("efternamn")
-        });
+            // Hämta namn och lägg till i tabellen
+            String sqlNamn = "SELECT fornamn, efternamn FROM anstalld WHERE aid = " + aidAttLaggaTill;
+            HashMap<String, String> person = idb.fetchRow(sqlNamn);
         
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
+            DefaultTableModel model = (DefaultTableModel) tblHandläggare.getModel();
+            model.addRow(new Object[]{
+                aidAttLaggaTill,
+                person.get("fornamn"),
+                person.get("efternamn")
+            });
+        
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
     }//GEN-LAST:event_btnLäggTillActionPerformed
 
+    //Tar bort den markerade raden
     private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
         int valdRad = tblHandläggare.getSelectedRow();
     
-    if (valdRad == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Markera en handläggare att ta bort först.");
-        return;
-    }
+        if (valdRad == -1) 
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "Markera en handläggare att ta bort först.");
+            return;
+        }
     
-    DefaultTableModel model = (DefaultTableModel) tblHandläggare.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblHandläggare.getModel();
     
-    // Spara aid:t i listan över borttagna
-    String aidAttTaBort = model.getValueAt(valdRad, 0).toString();
-    bortagnaAid.add(aidAttTaBort);
+        // Spara aid:t i listan över borttagna
+        String aidAttTaBort = model.getValueAt(valdRad, 0).toString();
+        bortagnaAid.add(aidAttTaBort);
     
-    model.removeRow(valdRad);
+        model.removeRow(valdRad);
     }//GEN-LAST:event_btnTaBortActionPerformed
 
+    //Sparar eventuella ändringar som har gjorts till tabellen
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
-        try {
-        // Först - radera alla som markerats för borttagning
-        for (String aidAttTaBort : bortagnaAid) {
-            String sqlTaBort = "DELETE FROM ans_proj WHERE pid = " + pid + " AND aid = " + aidAttTaBort;
-            idb.delete(sqlTaBort);
-        }
-        bortagnaAid.clear();
-        
-        // Sedan - lägg till alla i tabellen som inte redan finns i databasen
-        DefaultTableModel model = (DefaultTableModel) tblHandläggare.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            String aidIRad = model.getValueAt(i, 0).toString();
-            
-            // Kolla om kopplingen redan finns i databasen
-            String sqlKolla = "SELECT aid FROM ans_proj WHERE pid = " + pid + " AND aid = " + aidIRad;
-            String finns = idb.fetchSingle(sqlKolla);
-            
-            // Finns den inte, lägg till
-            if (finns == null) {
-                String sqlNy = "INSERT INTO ans_proj (pid, aid) VALUES (" + pid + ", " + aidIRad + ")";
-                idb.insert(sqlNy);
+        try 
+        {
+            // Först - radera alla som markerats för borttagning
+            for (String aidAttTaBort : bortagnaAid) 
+            {
+                String sqlTaBort = "DELETE FROM ans_proj WHERE pid = " + pid + " AND aid = " + aidAttTaBort;
+                idb.delete(sqlTaBort);
             }
+            bortagnaAid.clear();
+        
+            // Sedan - lägg till alla i tabellen som inte redan finns i databasen
+            DefaultTableModel model = (DefaultTableModel) tblHandläggare.getModel();
+            for (int i = 0; i < model.getRowCount(); i++) 
+            {
+                String aidIRad = model.getValueAt(i, 0).toString();
+            
+                // Kolla om kopplingen redan finns i databasen
+                String sqlKolla = "SELECT aid FROM ans_proj WHERE pid = " + pid + " AND aid = " + aidIRad;
+                String finns = idb.fetchSingle(sqlKolla);
+            
+                // Finns den inte, lägg till
+                if (finns == null) 
+                {
+                    String sqlNy = "INSERT INTO ans_proj (pid, aid) VALUES (" + pid + ", " + aidIRad + ")";
+                    idb.insert(sqlNy);
+                }
+            }
+        
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+            fyllHandläggare();
+        
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod vid sparande.");
         }
-        
-        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
-        fyllHandläggare();
-        
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod vid sparande.");
-    }
     }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
