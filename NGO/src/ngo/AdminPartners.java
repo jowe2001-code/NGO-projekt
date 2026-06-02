@@ -17,6 +17,7 @@ public class AdminPartners extends javax.swing.JFrame {
     
     private InfDB idb;
     private boolean arAdmin;
+    private ArrayList<String> bortagnaPid = new ArrayList<>();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminPartners.class.getName());
 
     /**
@@ -153,70 +154,103 @@ private void fyllTabell() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSparaActionPerformed
-if (tblAdminPartners.isEditing()) {
-            tblAdminPartners.getCellEditor().stopCellEditing();
+ if (tblAdminPartners.isEditing()) {
+        tblAdminPartners.getCellEditor().stopCellEditing();
+    }
+
+    DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
+    int antalRader = model.getRowCount();
+
+    try {
+        // Först - radera alla partners som markerats för borttagning
+        for (String pid : bortagnaPid) {
+            // Ta bort kopplingar i projekt_partner först
+            idb.delete("DELETE FROM projekt_partner WHERE partner_pid = " + pid);
+            // Sedan ta bort själva partnern
+            idb.delete("DELETE FROM partner WHERE pid = " + pid);
         }
+        bortagnaPid.clear();
 
-        DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
-        int antalRader = model.getRowCount();
+        for (int i = 0; i < antalRader; i++) {
+            String pid = model.getValueAt(i, 0).toString();
+            String namn = model.getValueAt(i, 1).toString();
+            String kontaktperson = model.getValueAt(i, 2).toString();
+            String epost = model.getValueAt(i, 3).toString();
+            String telefon = model.getValueAt(i, 4).toString();
+            String adress = model.getValueAt(i, 5).toString();
+            String branch = model.getValueAt(i, 6).toString();
+            String stadNamn = model.getValueAt(i, 7).toString();
 
-        try {
-            for (int i = 0; i < antalRader; i++) {
-                
-                String pid = model.getValueAt(i, 0).toString();
-                String namn = model.getValueAt(i, 1).toString();
-                
-                if (namn.isEmpty()) continue;
-
-                String kontakt = model.getValueAt(i, 2).toString();
-                String epost = model.getValueAt(i, 3).toString();
-                String telefon = model.getValueAt(i, 4).toString();
-                String adress = model.getValueAt(i, 5).toString();
-                String branch = model.getValueAt(i, 6).toString();
-                String stadNamn = model.getValueAt(i, 7).toString();
-                
-                String stadId = "null";
-                if (stadNamn != null && !stadNamn.isEmpty()) {
-                    String sqlHittaStad = "SELECT sid FROM stad WHERE namn = '" + stadNamn + "'";
-                    String hittatId = idb.fetchSingle(sqlHittaStad);
-                    
-                    if (hittatId != null) {
-                        stadId = hittatId;
-                    } else {
-                        javax.swing.JOptionPane.showMessageDialog(this, "Staden '" + stadNamn + "' finns inte. Sparar utan stad.");
-                    }
-                }
-
-                if (pid.isEmpty()) {
-                    String nyttId = idb.getAutoIncrement("partner", "pid");
-                    String sqlInsert = "INSERT INTO partner (pid, namn, kontaktperson, kontaktepost, telefon, adress, branch, stad) VALUES (" +
-                            nyttId + ", '" + namn + "', '" + kontakt + "', '" + epost + "', '" + 
-                            telefon + "', '" + adress + "', '" + branch + "', " + stadId + ")";
-                    idb.insert(sqlInsert);
-                } else {
-                    String sqlUpdate = "UPDATE partner SET " +
-                            "namn = '" + namn + "', " +
-                            "kontaktperson = '" + kontakt + "', " +
-                            "kontaktepost = '" + epost + "', " +
-                            "telefon = '" + telefon + "', " +
-                            "adress = '" + adress + "', " +
-                            "branch = '" + branch + "', " +
-                            "stad = " + stadId + " " +
-                            "WHERE pid = " + pid;
-                    idb.update(sqlUpdate);
-                }
+            // VALIDERING - namn får inte vara tomt
+            if (namn.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Namn. Namnet får inte vara tomt.");
+                return;
             }
-            
-            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna och nya partners har sparats!");
-            
-            // Ladda om tabellen så vi ser de nya städerna/länderna direkt
-            model.setRowCount(0);
-            fyllTabell();
 
-        } catch (InfException ex) {
-            System.out.println("Fel vid sparande: " + ex.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
+            // VALIDERING - kontaktperson, måste vara giltigt namn
+            if (!kontaktperson.isEmpty() && !Validering.arGiltigtNamn(kontaktperson)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Kontaktperson. "
+                        + "Namnet får bara innehålla bokstäver.");
+                return;
+            }
+
+            // VALIDERING - telefon
+            if (!telefon.isEmpty() && !Validering.arGiltigtTelefon(telefon)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Telefon. "
+                        + "Telefonnumret får bara innehålla siffror och bindestreck.");
+                return;
+            }
+
+            // VALIDERING - stad får inte vara tom
+            if (stadNamn.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Stad. Stad måste anges.");
+                return;
+            }
+
+            // Översätt stad-namn till stad-ID
+            String sqlStad = "SELECT sid FROM stad WHERE namn = '" + stadNamn + "'";
+            String stadId = idb.fetchSingle(sqlStad);
+            if (stadId == null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Stad. "
+                        + "Hittar ingen stad med namnet '" + stadNamn + "'.");
+                return;
+            }
+
+            if (pid.isEmpty()) {
+                // NY partner
+                String nyttPid = idb.getAutoIncrement("partner", "pid");
+                String sqlNy = "INSERT INTO partner (pid, namn, kontaktperson, kontaktepost, telefon, adress, branch, stad) VALUES ("
+                        + nyttPid + ", '" + namn + "', '" + kontaktperson + "', '"
+                        + epost + "', '" + telefon + "', '" + adress + "', '"
+                        + branch + "', " + stadId + ")";
+                idb.insert(sqlNy);
+            } else {
+                // Befintlig partner - uppdatera
+                String sqlUppdatera = "UPDATE partner SET "
+                        + "namn = '" + namn + "', "
+                        + "kontaktperson = '" + kontaktperson + "', "
+                        + "kontaktepost = '" + epost + "', "
+                        + "telefon = '" + telefon + "', "
+                        + "adress = '" + adress + "', "
+                        + "branch = '" + branch + "', "
+                        + "stad = " + stadId + " "
+                        + "WHERE pid = " + pid;
+                idb.update(sqlUppdatera);
+            }
         }
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+        fyllTabell();
+
+    } catch (InfException ex) {
+        System.out.println("Fel vid sparande: " + ex.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
+    }
     }//GEN-LAST:event_BtnSparaActionPerformed
 
     private void btnLaggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaggTillActionPerformed
@@ -227,28 +261,21 @@ DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
 
     private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
 int valdRad = tblAdminPartners.getSelectedRow();
-        
-        if (valdRad == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Markera en partner i tabellen att ta bort först.");
-            return;
-        }
-        
-        DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
-        String pid = model.getValueAt(valdRad, 0).toString();
-        
-        if (pid != null && !pid.isEmpty()) {
-            try {
-                // Ta bort kopplingar och därefter partnern
-                idb.delete("DELETE FROM projekt_partner WHERE partner_pid = " + pid);
-                idb.delete("DELETE FROM partner WHERE pid = " + pid);
-            } catch (InfException ex) {
-                System.out.println("Fel vid borttagning: " + ex.getMessage());
-                javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Partnern kunde inte raderas.");
-                return;
-            }
-        }
-        
-        model.removeRow(valdRad);
+    
+    if (valdRad == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Markera en partner att ta bort först.");
+        return;
+    }
+    
+    DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
+    
+    // Spara pid i listan över borttagna - sparas i databasen vid spara
+    Object pidVarde = model.getValueAt(valdRad, 0);
+    if (pidVarde != null && !pidVarde.toString().isEmpty()) {
+        bortagnaPid.add(pidVarde.toString());
+    }
+    
+    model.removeRow(valdRad);
     }//GEN-LAST:event_btnTaBortActionPerformed
 
     /**
