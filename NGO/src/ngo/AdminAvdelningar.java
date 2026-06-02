@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class AdminAvdelningar extends javax.swing.JFrame {
     private InfDB idb;
+    private ArrayList<String> bortagnaAvdid = new ArrayList<>();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminAvdelningar.class.getName());
 
     /**
@@ -76,6 +77,7 @@ public class AdminAvdelningar extends javax.swing.JFrame {
         tblAvdelningar = new javax.swing.JTable();
         btnSpara = new javax.swing.JButton();
         btnLaggTill = new javax.swing.JButton();
+        btnTaBort = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -98,12 +100,17 @@ public class AdminAvdelningar extends javax.swing.JFrame {
         btnLaggTill.setText("Lägg till avdelning");
         btnLaggTill.addActionListener(this::btnLaggTillActionPerformed);
 
+        btnTaBort.setText("Ta bort avdelning");
+        btnTaBort.addActionListener(this::btnTaBortActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnTaBort)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLaggTill)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSpara)
@@ -117,7 +124,8 @@ public class AdminAvdelningar extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSpara)
-                    .addComponent(btnLaggTill))
+                    .addComponent(btnLaggTill)
+                    .addComponent(btnTaBort))
                 .addContainerGap())
         );
 
@@ -140,6 +148,15 @@ public class AdminAvdelningar extends javax.swing.JFrame {
     int antalRader = model.getRowCount();
 
     try {
+        
+        // Först - radera avdelningar som markerats för borttagning
+        for (String avdid : bortagnaAvdid) {
+        String sqlTaBort = "DELETE FROM avdelning WHERE avdid = " + avdid;
+        idb.delete(sqlTaBort);
+        }
+         bortagnaAvdid.clear();
+        
+        
         for (int i = 0; i < antalRader; i++) {
             String avdid = model.getValueAt(i, 0).toString();
             String namn = model.getValueAt(i, 1).toString();
@@ -183,6 +200,26 @@ public class AdminAvdelningar extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_btnSparaActionPerformed
 
+    private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
+        int valdRad = tblAvdelningar.getSelectedRow();
+    
+    if (valdRad == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Markera en avdelning att ta bort först.");
+        return;
+    }
+    
+    DefaultTableModel model = (DefaultTableModel) tblAvdelningar.getModel();
+    
+    // Hämta avdid för raden (om den redan finns i databasen)
+    Object avdidVarde = model.getValueAt(valdRad, 0);
+    
+    if (avdidVarde != null && !avdidVarde.toString().isEmpty()) {
+        bortagnaAvdid.add(avdidVarde.toString());
+    }
+    
+    model.removeRow(valdRad);
+    }//GEN-LAST:event_btnTaBortActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -211,6 +248,7 @@ public class AdminAvdelningar extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLaggTill;
     private javax.swing.JButton btnSpara;
+    private javax.swing.JButton btnTaBort;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblAvdelningar;
     // End of variables declaration//GEN-END:variables
