@@ -31,42 +31,45 @@ public class PartnerProjekt extends javax.swing.JFrame {
         fyllPartner();
     }
 
+    //Fyll i tabellen som visar vilka partners som arbetar på projektet som valdes
     private void fyllPartner()
-{
-    try 
     {
-        // Hämta alla partners kopplade till projektet
-        String sql =
-        "SELECT p.pid, p.namn " +
-        "FROM partner p " +
-        "JOIN projekt_partner pp ON p.pid = pp.partner_pid " +
-        "WHERE pp.pid = " + pid;
-
-        ArrayList<HashMap<String, String>> partners = idb.fetchRows(sql);
-
-        String[] kolumner = {"ID", "Namn"};
-        // Skrivskydda alla celler - man lägger till/tar bort via knappar
-        DefaultTableModel model = new DefaultTableModel(kolumner, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tblPartner.setModel(model);
-
-        for (HashMap<String, String> partner : partners)
+        try 
         {
-            model.addRow(new Object[]{
-                partner.get("pid"),
-                partner.get("namn")
-            });
+            // Hämta alla partners kopplade till projektet
+            String sql =
+            "SELECT p.pid, p.namn " + 
+            "FROM partner p " +
+            "JOIN projekt_partner pp ON p.pid = pp.partner_pid " +
+            "WHERE pp.pid = " + pid;
+
+            ArrayList<HashMap<String, String>> partners = idb.fetchRows(sql);
+
+            String[] kolumner = {"ID", "Namn"};
+            // Skrivskydda alla celler - man lägger till/tar bort via knappar
+            DefaultTableModel model = new DefaultTableModel(kolumner, 0) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) 
+                {
+                    return false;
+                }
+            };
+            tblPartner.setModel(model);
+
+            for (HashMap<String, String> partner : partners)
+            {
+                model.addRow(new Object[]{
+                    partner.get("pid"),
+                    partner.get("namn")
+                });
+            }
+        }
+        catch (InfException ex)
+        {
+            System.out.println(ex.getMessage());
         }
     }
-    catch (InfException ex)
-    {
-        System.out.println(ex.getMessage());
-    }
-}
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -139,106 +142,117 @@ public class PartnerProjekt extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Lägg till en rad för att lägga till partner
     private void btnLäggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLäggTillActionPerformed
         // Be användaren skriva in partnerns ID
-    String partnerPidAttLaggaTill = javax.swing.JOptionPane.showInputDialog(this, 
-            "Skriv in ID-numret på partnern som ska läggas till:");
+        String partnerPidAttLaggaTill = javax.swing.JOptionPane.showInputDialog(this, "Skriv in ID-numret på partnern som ska läggas till:");
     
-    // Om användaren tryckte avbryt eller skrev tomt - gör inget
-    if (partnerPidAttLaggaTill == null || partnerPidAttLaggaTill.isEmpty()) {
-        return;
-    }
-    
-    // Validera att det bara är siffror
-    if (!Validering.arEnbartSiffror(partnerPidAttLaggaTill)) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-                "ID måste vara ett nummer.");
-        return;
-    }
-    
-    try {
-        // Kolla att partnern finns i partner-tabellen
-        String sqlKolla = "SELECT pid FROM partner WHERE pid = " + partnerPidAttLaggaTill;
-        String finns = idb.fetchSingle(sqlKolla);
-        if (finns == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Det finns ingen partner med ID " + partnerPidAttLaggaTill + ".");
+        // Om användaren tryckte avbryt eller skrev tomt - gör inget
+        if (partnerPidAttLaggaTill == null || partnerPidAttLaggaTill.isEmpty()) 
+        {
             return;
         }
-        
-        // Kolla att partnern inte redan är tilldelad projektet
-        String sqlRedan = "SELECT partner_pid FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidAttLaggaTill;
-        String redan = idb.fetchSingle(sqlRedan);
-        if (redan != null) {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Partnern är redan tilldelad detta projekt.");
+    
+        // Validera att det bara är siffror
+        if (!Validering.arEnbartSiffror(partnerPidAttLaggaTill)) 
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "ID måste vara ett nummer.");
             return;
         }
+    
+        try 
+        {
+            // Kolla att partnern finns i partner-tabellen
+            String sqlKolla = "SELECT pid FROM partner WHERE pid = " + partnerPidAttLaggaTill;
+            String finns = idb.fetchSingle(sqlKolla);
+            if (finns == null) 
+            {
+                javax.swing.JOptionPane.showMessageDialog(this, "Det finns ingen partner med ID " + partnerPidAttLaggaTill + ".");
+                return;
+            }
         
-        // Hämta partnerns namn och lägg till i tabellen
-        String sqlNamn = "SELECT namn FROM partner WHERE pid = " + partnerPidAttLaggaTill;
-        String namn = idb.fetchSingle(sqlNamn);
+            // Kolla att partnern inte redan är tilldelad projektet
+            String sqlRedan = "SELECT partner_pid FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidAttLaggaTill;
+            String redan = idb.fetchSingle(sqlRedan);
+            if (redan != null) 
+            {
+                javax.swing.JOptionPane.showMessageDialog(this, "Partnern är redan tilldelad detta projekt.");
+                return;
+            }
         
-        DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
-        model.addRow(new Object[]{
-            partnerPidAttLaggaTill,
-            namn
-        });
+            // Hämta partnerns namn och lägg till i tabellen
+            String sqlNamn = "SELECT namn FROM partner WHERE pid = " + partnerPidAttLaggaTill;
+            String namn = idb.fetchSingle(sqlNamn);
         
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
+            DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
+            model.addRow(new Object[]{
+                partnerPidAttLaggaTill,
+                namn
+            });        
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
     }//GEN-LAST:event_btnLäggTillActionPerformed
 
+    //Tar bort den markerade raden
     private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
-    int valdRad = tblPartner.getSelectedRow();
+        int valdRad = tblPartner.getSelectedRow();
     
-    if (valdRad == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Markera en partner att ta bort först.");
-        return;
-    }
+        if (valdRad == -1) 
+        {
+            javax.swing.JOptionPane.showMessageDialog(this, "Markera en partner att ta bort först.");
+            return;
+        }
     
-    DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
     
-    // Spara partner-pid i listan över borttagna
-    String partnerPidAttTaBort = model.getValueAt(valdRad, 0).toString();
-    bortagnaPartnerPid.add(partnerPidAttTaBort);
+        // Spara partner-pid i listan över borttagna
+        String partnerPidAttTaBort = model.getValueAt(valdRad, 0).toString();
+        bortagnaPartnerPid.add(partnerPidAttTaBort);
     
-    model.removeRow(valdRad);
+        model.removeRow(valdRad);
     }//GEN-LAST:event_btnTaBortActionPerformed
 
+    //Sparar eventuella ändringar som har gjorts till tabellen
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
-         try {
-        // Först - radera alla som markerats för borttagning
-        for (String partnerPidAttTaBort : bortagnaPartnerPid) {
-            String sqlTaBort = "DELETE FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidAttTaBort;
-            idb.delete(sqlTaBort);
-        }
-        bortagnaPartnerPid.clear();
-        
-        // Sedan - lägg till alla i tabellen som inte redan finns i databasen
-        DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            String partnerPidIRad = model.getValueAt(i, 0).toString();
-            
-            // Kolla om kopplingen redan finns i databasen
-            String sqlKolla = "SELECT partner_pid FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidIRad;
-            String finns = idb.fetchSingle(sqlKolla);
-            
-            // Finns den inte, lägg till
-            if (finns == null) {
-                String sqlNy = "INSERT INTO projekt_partner (pid, partner_pid) VALUES (" + pid + ", " + partnerPidIRad + ")";
-                idb.insert(sqlNy);
+        try 
+        {
+            // Först - radera alla som markerats för borttagning
+            for (String partnerPidAttTaBort : bortagnaPartnerPid) 
+            {
+                String sqlTaBort = "DELETE FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidAttTaBort;
+                idb.delete(sqlTaBort);
             }
+            bortagnaPartnerPid.clear();
+        
+            // Sedan - lägg till alla i tabellen som inte redan finns i databasen
+            DefaultTableModel model = (DefaultTableModel) tblPartner.getModel();
+            for (int i = 0; i < model.getRowCount(); i++) 
+            {
+                String partnerPidIRad = model.getValueAt(i, 0).toString();
+            
+                // Kolla om kopplingen redan finns i databasen
+                String sqlKolla = "SELECT partner_pid FROM projekt_partner WHERE pid = " + pid + " AND partner_pid = " + partnerPidIRad;
+                String finns = idb.fetchSingle(sqlKolla);
+            
+                // Finns den inte, lägg till
+                if (finns == null) 
+                {
+                    String sqlNy = "INSERT INTO projekt_partner (pid, partner_pid) VALUES (" + pid + ", " + partnerPidIRad + ")";
+                    idb.insert(sqlNy);
+                }
+            }
+        
+            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+            fyllPartner();
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod vid sparande.");
         }
-        
-        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
-        fyllPartner();
-        
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod vid sparande.");
-    }
     }//GEN-LAST:event_btnSparaActionPerformed
 
     /**
