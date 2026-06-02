@@ -29,27 +29,31 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
         fyllTabell();
     }
 
-    private void fyllTabell() {
+    //Fyller i tabellen med hållbarhetsmålen
+    private void fyllTabell() 
+    {
         String[] kolumnNamn = {"ID", "Namn", "Beskrivning", "Prioritet"};
-        
     
-    
-    DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) 
+        {
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column) 
+            {
                 return arAdmin; // true om admin, false om handläggare
             }
         };
-    //
-    adminHållbarhetsmål.setModel(model);
-    //
-    try {
+        
+        adminHållbarhetsmål.setModel(model);
+    
+        try 
+        {
             String sqlFraga = "SELECT * FROM hallbarhetsmal";
             ArrayList<HashMap<String, String>> allaMal = idb.fetchRows(sqlFraga);
             
-            if (allaMal != null) {
-                for (HashMap<String, String> rad : allaMal) {
-                    
+            if (allaMal != null) 
+            {
+                for (HashMap<String, String> rad : allaMal) 
+                {                   
                     // Hämta värdena med exakt samma namn som i databas-kolumnerna
                     String[] dataRad = {
                         rad.get("hid"), 
@@ -60,7 +64,9 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
                     model.addRow(dataRad);
                 }
             }
-        } catch (InfException ex) {
+        }
+        catch (InfException ex) 
+        {
             System.out.println("Fel vid hämtning av hållbarhetsmål: " + ex.getMessage());
         }
     }    
@@ -119,17 +125,19 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Sparar eventuella ändringar som har gjorts till tabellen
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
-        // TODO add your handling code here:
-        if (adminHållbarhetsmål.isEditing()) {
+        if (adminHållbarhetsmål.isEditing()) 
+        {
             adminHållbarhetsmål.getCellEditor().stopCellEditing();
         }
         DefaultTableModel model = (DefaultTableModel) adminHållbarhetsmål.getModel();
         int antalRader = model.getRowCount();
 
-        try {
-            for (int i = 0; i < antalRader; i++) {
-                
+        try 
+        {
+            for (int i = 0; i < antalRader; i++) 
+            {                
                 String hid = model.getValueAt(i, 0).toString();
                 String namn = model.getValueAt(i, 1).toString();
                 String malnummer = model.getValueAt(i, 2).toString();
@@ -137,18 +145,19 @@ public class AdminHållbarhetsmål extends javax.swing.JFrame {
                 String prioritet = model.getValueAt(i, 4).toString();
 
                 String sqlUppdatera = "UPDATE hallbarhetsmal SET " +
-                        "namn = '" + namn + "', " +
-                        "malnummer = '" + malnummer + "', " +
-                        "beskrivning = '" + beskrivning + "', " +
-                        "prioritet = '" + prioritet + "' " +
-                        "WHERE hid = " + hid;
+                    "namn = '" + namn + "', " +
+                    "malnummer = '" + malnummer + "', " +
+                    "beskrivning = '" + beskrivning + "', " +
+                    "prioritet = '" + prioritet + "' " +
+                    "WHERE hid = " + hid;
 
                 idb.update(sqlUppdatera);
             }
             
             javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna av hållbarhetsmålen har sparats!");
-
-        } catch (InfException ex) {
+        }
+        catch (InfException ex) 
+        {
             System.out.println("Fel vid uppdatering av hållbarhetsmål: " + ex.getMessage());
             javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod när ändringarna skulle sparas.");
         }
