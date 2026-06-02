@@ -18,7 +18,10 @@ public class AdminLänder extends javax.swing.JFrame {
     private InfDB idb;
     private boolean arAdmin;
     private ArrayList<String> bortagnaLid = new ArrayList<>();
-
+    
+    /**
+     * Creates new form AdminLänder
+     */
     public AdminLänder(InfDB idb, boolean arAdmin) {
         this.idb = idb;
         this.arAdmin = arAdmin;
@@ -26,25 +29,33 @@ public class AdminLänder extends javax.swing.JFrame {
         
         fyllTabell();
     }
-    private void fyllTabell() {
+
+    //Fyller tabell med information om länder
+    private void fyllTabell() 
+    {
         String[] kolumnNamn = {"ID", "Namn", "Språk", "Valuta", "Tidszon", "Politisk struktur", "Ekonomi"};
         
         // Vi nollställer modellen varje gång vi fyller den för att undvika dublering vid till lägg av nytt land 
-        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) 
+        {
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column) 
+            {
                 return arAdmin && column != 0;
             }
         };
         
         tblLander.setModel(model);
         
-        try {
+        try 
+        {
             String sql = "SELECT * FROM land";
             ArrayList<HashMap<String, String>> allaLander = idb.fetchRows(sql);
             
-            if(allaLander != null) {
-                for(HashMap<String, String> rad : allaLander) {
+            if(allaLander != null) 
+            {
+                for(HashMap<String, String> rad : allaLander) 
+                {
                     String[] dataRad = {
                         rad.get("lid"),
                         rad.get("namn"),
@@ -57,7 +68,9 @@ public class AdminLänder extends javax.swing.JFrame {
                     model.addRow(dataRad);
                 }
             }
-        } catch(InfException ex) {
+        }
+        catch(InfException ex)
+        {
             System.out.println("Fel vid hämtning av länder: " + ex.getMessage());
         }
     }
@@ -128,35 +141,35 @@ public class AdminLänder extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Lägger till en ny rad för att skapa ett nytt land
     private void btnNyttLandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNyttLandActionPerformed
-        // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
         
         // Lägger till en tom ny rad i tabellen
         model.addRow(new Object[]{"", "", "", "", "", "", ""});
     }//GEN-LAST:event_btnNyttLandActionPerformed
 
+    //Sparar eventuella ändringar som har gjorts till tabellen
     private void btnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSparaActionPerformed
-        // TODO add your handling code here:                                       
-if (tblLander.isEditing()) {
+        if (tblLander.isEditing()) 
+        {
             tblLander.getCellEditor().stopCellEditing();
         }
 
         DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
         int antalRader = model.getRowCount();
 
-        try {
-            
+        try 
+        {            
             // Först - radera länder som markerats för borttagning
-                for (String lid : bortagnaLid) {
+            for (String lid : bortagnaLid) 
+            {
                 String sqlTaBort = "DELETE FROM land WHERE lid = " + lid;
                 idb.delete(sqlTaBort);
-                }
-                bortagnaLid.clear();
+            }
+            bortagnaLid.clear();
             
             for (int i = 0; i < antalRader; i++) {
-                
-                // Hämta alla fält från raden
                 String lid = model.getValueAt(i, 0).toString();
                 String namn = model.getValueAt(i, 1).toString();
                 String sprak = model.getValueAt(i, 2).toString();
@@ -166,8 +179,8 @@ if (tblLander.isEditing()) {
                 String ekonomi = model.getValueAt(i, 6).toString();
 
                 // om ID-fältet är tomt, betyder "Lägg till" kanppen har används
-                if(lid.isEmpty()) {
-                    
+                if(lid.isEmpty()) 
+                { 
                     // Räkna nästa lediga id
                     String nyttId = idb.getAutoIncrement("land", "lid");
                     
@@ -182,7 +195,9 @@ if (tblLander.isEditing()) {
                     // Uppdatera tabellen
                     model.setValueAt(nyttId, i, 0);
                     
-                } else {
+                }
+                else
+                {
                     // Om ID finns
                     String sqlUppdatera = "UPDATE land SET " +
                             "namn = '" + namn + "', " +
@@ -197,29 +212,34 @@ if (tblLander.isEditing()) {
                 }
             }
             javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna och nya länder har sparats!");
-
-        } catch (InfException ex) {
+        }
+        catch (InfException ex)
+        {
             System.out.println("Fel vid uppdatering av länder: " + ex.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(this, "Kunde inte spara. Kolla så att valutan skrivs med punkt (t.ex. 10.5).");        
+            javax.swing.JOptionPane.showMessageDialog(this, "Kunde inte spara. Kolla så att valutan skrivs med punkt (t.ex. 10.5).");
+        }
     }//GEN-LAST:event_btnSparaActionPerformed
-    }
+
+    //Tar bort den markerade raden 
     private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
         int valdRad = tblLander.getSelectedRow();
     
-    if (valdRad == -1) {
-        JOptionPane.showMessageDialog(this, "Markera ett land att ta bort först.");
-        return;
-    }
+        if (valdRad == -1)
+        {
+            JOptionPane.showMessageDialog(this, "Markera ett land att ta bort först.");
+            return;
+        }
     
-    DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
     
-    // Spara lid i listan över borttagna - sparas i databasen vid spara
-    Object lidVarde = model.getValueAt(valdRad, 0);
-    if (lidVarde != null && !lidVarde.toString().isEmpty()) {
-        bortagnaLid.add(lidVarde.toString());
-    }
+        // Spara lid i listan över borttagna - sparas i databasen vid spara
+        Object lidVarde = model.getValueAt(valdRad, 0);
+        if (lidVarde != null && !lidVarde.toString().isEmpty())
+        {
+            bortagnaLid.add(lidVarde.toString());
+        }
     
-    model.removeRow(valdRad);
+        model.removeRow(valdRad);
     }//GEN-LAST:event_btnTaBortActionPerformed
 
 
