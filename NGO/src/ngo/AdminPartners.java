@@ -17,7 +17,7 @@ public class AdminPartners extends javax.swing.JFrame {
     
     private InfDB idb;
     private boolean arAdmin;
-   
+    private ArrayList<String> bortagnaPid = new ArrayList<>();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminPartners.class.getName());
 
     /**
@@ -33,62 +33,54 @@ public AdminPartners(InfDB idb, boolean arAdmin) {
     }
 private void fyllTabell() {
         String[] kolumnNamn = {"ID", "Namn", "Kontaktperson", "E-post", "Telefon", "Adress", "Bransch", "Stad", "Land"};
-        
-        DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return arAdmin; 
-            }
-        };
-        
-      tblAdminPartners.setModel(model);
-        
-        try {
-String sqlFraga = "SELECT * FROM partner";
-            ArrayList<HashMap<String, String>> allaPartners = idb.fetchRows(sqlFraga);
-            
-            if (allaPartners != null) {
-                for (HashMap<String, String> rad : allaPartners) {
-                    
-                    // 2. Vi hämtar ID:t för staden (som ligger i kolumnen 'stad')
-                    String stadId = rad.get("stad"); 
-                    String stadNamn = "";
-                    String landNamn = "";
-                    
-                    // 3. Om staden finns, slår vi upp vad den heter
-                    if(stadId != null) {
-                        String sqlStad = "SELECT namn FROM stad WHERE sid = " + stadId;
-                        stadNamn = idb.fetchSingle(sqlStad);
-                        
-                        // Vi hämtar också vilket land (ID) staden tillhör
-                        String sqlStadLandID = "SELECT land FROM stad WHERE sid = " + stadId;
-                        String landId = idb.fetchSingle(sqlStadLandID);
-                        
-                        // 4. Om landet finns, slår vi upp vad det heter
-                        if(landId != null) {
-                            String sqlLand = "SELECT namn FROM land WHERE lid = " + landId;
-                            landNamn = idb.fetchSingle(sqlLand);
-                        }
-                    }
-                    
-  String[] dataRad = {
-                        rad.get("pid"), 
-                        rad.get("namn"),        
-                        rad.get("kontaktperson"), 
-                        rad.get("kontaktepost"), 
-                        rad.get("telefon"), 
-                        rad.get("adress"), 
-                        rad.get("branch"), 
-                        stadNamn,                 
-                        landNamn                  
-                    };
-                    
-                    model.addRow(dataRad);
-                }
-            }
-        } catch (InfException ex) {
-            System.out.println("Fel vid hämtning av partners: " + ex.getMessage());
+    
+    DefaultTableModel model = new DefaultTableModel(kolumnNamn, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            // ID-kolumnen (0) och Land-kolumnen (8) får inte redigeras
+            // Landet bestäms automatiskt av vilken stad man väljer
+            return column != 0 && column != 8;
         }
+    };
+    
+    tblAdminPartners.setModel(model);
+    
+    try {
+        String sqlFraga = "SELECT pid, namn, kontaktperson, kontaktepost, telefon, adress, branch, stad FROM partner";
+        ArrayList<HashMap<String, String>> allaPartners = idb.fetchRows(sqlFraga);
+        
+        if (allaPartners != null) {
+            for (HashMap<String, String> rad : allaPartners) {
+                String stadId = rad.get("stad");
+                String stadNamn = "";
+                String landNamn = "";
+                
+                // Slå upp stadens och landets namn
+                if (stadId != null) {
+                    String sqlStad = "SELECT namn FROM stad WHERE sid = " + stadId;
+                    stadNamn = idb.fetchSingle(sqlStad);
+                    
+                    String sqlLand = "SELECT l.namn FROM land l JOIN stad s ON l.lid = s.land WHERE s.sid = " + stadId;
+                    landNamn = idb.fetchSingle(sqlLand);
+                }
+                
+                String[] dataRad = {
+                    rad.get("pid"), 
+                    rad.get("namn"),        
+                    rad.get("kontaktperson"), 
+                    rad.get("kontaktepost"), 
+                    rad.get("telefon"), 
+                    rad.get("adress"), 
+                    rad.get("branch"), 
+                    stadNamn,                 
+                    landNamn                  
+                };
+                model.addRow(dataRad);
+            }
+        }
+    } catch (InfException ex) {
+        System.out.println("Fel vid hämtning av partners: " + ex.getMessage());
+    }
     }  
     /**
      * This method is called from within the constructor to initialize the form.
@@ -103,6 +95,8 @@ String sqlFraga = "SELECT * FROM partner";
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAdminPartners = new javax.swing.JTable();
         BtnSpara = new javax.swing.JButton();
+        btnLaggTill = new javax.swing.JButton();
+        btnTaBort = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
 
@@ -124,66 +118,150 @@ String sqlFraga = "SELECT * FROM partner";
         BtnSpara.setText("Spara ändringar");
         BtnSpara.addActionListener(this::BtnSparaActionPerformed);
 
+        btnLaggTill.setText("Lägg till partner");
+        btnLaggTill.addActionListener(this::btnLaggTillActionPerformed);
+
+        btnTaBort.setText("Ta bort partner");
+        btnTaBort.addActionListener(this::btnTaBortActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnTaBort)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLaggTill)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(BtnSpara))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1227, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BtnSpara)
-                .addGap(212, 212, 212))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BtnSpara))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnSpara)
+                    .addComponent(btnLaggTill)
+                    .addComponent(btnTaBort)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnSparaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSparaActionPerformed
-        // TODO add your handling code here:
         if (tblAdminPartners.isEditing()) {
-            tblAdminPartners.getCellEditor().stopCellEditing();
+        tblAdminPartners.getCellEditor().stopCellEditing();
+    }
+
+    DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
+    int antalRader = model.getRowCount();
+
+    try {
+        // Först - radera partners som markerats för borttagning
+        for (String pid : bortagnaPid) {
+            String sqlTaBort = "DELETE FROM partner WHERE pid = " + pid;
+            idb.delete(sqlTaBort);
         }
+        bortagnaPid.clear();
 
-        DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
-        int antalRader = model.getRowCount();
+        for (int i = 0; i < antalRader; i++) {
+            String pid = model.getValueAt(i, 0).toString();
+            String namn = model.getValueAt(i, 1).toString();
+            String kontaktperson = model.getValueAt(i, 2).toString();
+            String epost = model.getValueAt(i, 3).toString();
+            String telefon = model.getValueAt(i, 4).toString();
+            String adress = model.getValueAt(i, 5).toString();
+            String branch = model.getValueAt(i, 6).toString();
+            String stadNamn = model.getValueAt(i, 7).toString();
+            String landNamn = model.getValueAt(i, 8).toString();
 
-        try {
-            for (int i = 0; i < antalRader; i++) {
-                String pid = model.getValueAt(i, 0).toString();
-                String namn = model.getValueAt(i, 1).toString();
-                String kontaktperson = model.getValueAt(i, 2).toString();
-                String epost = model.getValueAt(i, 3).toString();
-                String telefon = model.getValueAt(i, 4).toString();
-                String adress = model.getValueAt(i, 5).toString();
-                String branch = model.getValueAt(i, 6).toString();
+            // VALIDERING - namn får inte vara tomt
+            if (namn.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Namn. Namnet får inte vara tomt.");
+                return;
+            }
 
-                String sqlUppdatera = "UPDATE partner SET " +
-                        "namn = '" + namn + "', " +
-                        "kontaktperson = '" + kontaktperson + "', " +
-                        "kontaktepost = '" + epost + "', " +
-                        "telefon = '" + telefon + "', " +
-                        "adress = '" + adress + "', " +
-                        "branch = '" + branch + "' " +
-                        "WHERE pid = " + pid;
-                
+            // Översätt stad-namn till stad-ID
+            String sqlStad = "SELECT sid FROM stad WHERE namn = '" + stadNamn + "'";
+            String stadId = idb.fetchSingle(sqlStad);
+            if (stadId == null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Stad. Hittar ingen stad med namnet '" + stadNamn + "'.");
+                return;
+            }
+
+            // Översätt land-namn till land-ID
+            String sqlLand = "SELECT lid FROM land WHERE namn = '" + landNamn + "'";
+            String landId = idb.fetchSingle(sqlLand);
+            if (landId == null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Fel i rad " + (i + 1) + ", kolumnen Land. Hittar inget land med namnet '" + landNamn + "'.");
+                return;
+            }
+
+            if (pid.isEmpty()) {
+                // NY partner
+                String nyttPid = idb.getAutoIncrement("partner", "pid");
+                String sqlNy = "INSERT INTO partner (pid, namn, kontaktperson, kontaktepost, telefon, adress, branch, stad, land) VALUES ("
+                        + nyttPid + ", '" + namn + "', '" + kontaktperson + "', '"
+                        + epost + "', '" + telefon + "', '" + adress + "', '"
+                        + branch + "', " + stadId + ", " + landId + ")";
+                idb.insert(sqlNy);
+            } else {
+                // Befintlig partner - uppdatera
+                String sqlUppdatera = "UPDATE partner SET "
+                        + "namn = '" + namn + "', "
+                        + "kontaktperson = '" + kontaktperson + "', "
+                        + "kontaktepost = '" + epost + "', "
+                        + "telefon = '" + telefon + "', "
+                        + "adress = '" + adress + "', "
+                        + "branch = '" + branch + "', "
+                        + "stad = " + stadId + ", "
+                        + "land = " + landId + " "
+                        + "WHERE pid = " + pid;
                 idb.update(sqlUppdatera);
             }
-            javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats i databasen!");
-
-        } catch (InfException ex) {
-            System.out.println("Fel vid uppdatering av partners: " + ex.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod när ändringarna skulle sparas.");
         }
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Ändringarna har sparats!");
+        fyllTabell();
+
+    } catch (InfException ex) {
+        System.out.println("Fel vid sparande: " + ex.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Ett fel uppstod. Kontrollera att alla fält är ifyllda korrekt.");
+    }
     }//GEN-LAST:event_BtnSparaActionPerformed
+
+    private void btnLaggTillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaggTillActionPerformed
+        // Lägg till en tom rad. ID lämnas tomt och fylls i automatiskt vid spara
+    DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
+    model.addRow(new Object[]{"", "", "", "", "", "", "", "", ""});
+    }//GEN-LAST:event_btnLaggTillActionPerformed
+
+    private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
+        int valdRad = tblAdminPartners.getSelectedRow();
+    
+    if (valdRad == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Markera en partner att ta bort först.");
+        return;
+    }
+    
+    DefaultTableModel model = (DefaultTableModel) tblAdminPartners.getModel();
+    
+    Object pidVarde = model.getValueAt(valdRad, 0);
+    
+    if (pidVarde != null && !pidVarde.toString().isEmpty()) {
+        bortagnaPid.add(pidVarde.toString());
+    }
+    
+    model.removeRow(valdRad);
+    }//GEN-LAST:event_btnTaBortActionPerformed
 
     /**
      * @param args the command line arguments
@@ -212,6 +290,8 @@ String sqlFraga = "SELECT * FROM partner";
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnSpara;
+    private javax.swing.JButton btnLaggTill;
+    private javax.swing.JButton btnTaBort;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblAdminPartners;
