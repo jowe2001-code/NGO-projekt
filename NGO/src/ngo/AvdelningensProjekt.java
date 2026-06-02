@@ -17,14 +17,30 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
     private String aid;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AvdelningensProjekt.class.getName());
 
-    private void laddaProjekt() {
-    try {
-        // Hämta först avdelnings-id för den inloggade användaren
-        String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
-        String avdelningId = idb.fetchSingle(sqlAvd);
+    
+    public AvdelningensProjekt(InfDB idb, String aid) {
+        this.idb = idb;
+        this.aid = aid;
+        initComponents();
+        laddaProjekt();
+        // Fyll comboboxen med statusalternativ
+        cmbStatus.addItem("Alla");
+        cmbStatus.addItem("Pågående");
+        cmbStatus.addItem("Planerat");
+        cmbStatus.addItem("Avslutat");
+    }
+
+    //Fyller tabell med alla projekt på den inloggades avdelning
+    private void laddaProjekt() 
+    {
+        try 
+        {
+            // Hämta först avdelnings-id för den inloggade användaren
+            String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
+            String avdelningId = idb.fetchSingle(sqlAvd);
         
-        // Hämta alla projekt för avdelningen
-        String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+            // Hämta alla projekt för avdelningen
+            String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
                 + "p.kostnad, p.status, p.prioritet, "
                 + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
                 + "l.namn AS land "
@@ -35,48 +51,52 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
                 + "JOIN anstalld ans ON ap.aid = ans.aid "
                 + "WHERE ans.avdelning = " + avdelningId;
 
-        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+            ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
 
-        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+            String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
             "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
 
-        String[][] data = new String[projekt.size()][10];
+            String[][] data = new String[projekt.size()][10];
 
-        for (int i = 0; i < projekt.size(); i++) {
-            data[i][0] = projekt.get(i).get("pid");
-            data[i][1] = projekt.get(i).get("projektnamn");
-            data[i][2] = projekt.get(i).get("beskrivning");
-            data[i][3] = projekt.get(i).get("startdatum");
-            data[i][4] = projekt.get(i).get("slutdatum");
-            data[i][5] = projekt.get(i).get("kostnad");
-            data[i][6] = projekt.get(i).get("status");
-            data[i][7] = projekt.get(i).get("prioritet");
-            data[i][8] = projekt.get(i).get("projektchef");
-            data[i][9] = projekt.get(i).get("namn");
+            for (int i = 0; i < projekt.size(); i++) {
+                data[i][0] = projekt.get(i).get("pid");
+                data[i][1] = projekt.get(i).get("projektnamn");
+                data[i][2] = projekt.get(i).get("beskrivning");
+                data[i][3] = projekt.get(i).get("startdatum");
+                data[i][4] = projekt.get(i).get("slutdatum");
+                data[i][5] = projekt.get(i).get("kostnad");
+                data[i][6] = projekt.get(i).get("status");
+                data[i][7] = projekt.get(i).get("prioritet");
+                data[i][8] = projekt.get(i).get("projektchef");
+                data[i][9] = projekt.get(i).get("namn");
+            }
+
+            tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) 
+                {
+                    return false;
+                }
+            });
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
         }
-
-        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
     }
-});
-
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
-}
-    
-    
-    
-    private void sokProjektPaDatum(String datum) {
-    try {
-        // Hämta avdelnings-id för inloggad användare
-        String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
-        String avdelningId = idb.fetchSingle(sqlAvd);
         
-        // Hämta alla aktiva projekt på avdelningen där datumet ligger inom projektets tidsspann
-        String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+    //Fyller tabell beroende på sökt datum och avdelning
+    private void sokProjektPaDatum(String datum) 
+    {
+        try 
+        {
+            // Hämta avdelnings-id för inloggad användare
+            String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
+            String avdelningId = idb.fetchSingle(sqlAvd);
+        
+            // Hämta alla aktiva projekt på avdelningen där datumet ligger inom projektets tidsspann
+            String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
                 + "p.kostnad, p.status, p.prioritet, "
                 + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
                 + "l.namn AS land "
@@ -89,50 +109,52 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
                 + " AND p.startdatum <= '" + datum + "'"
                 + " AND p.slutdatum >= '" + datum + "'";
 
-        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+            ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
 
-        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+            String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
             "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
 
-        String[][] data = new String[projekt.size()][10];
+            String[][] data = new String[projekt.size()][10];
 
-        for (int i = 0; i < projekt.size(); i++) {
-            data[i][0] = projekt.get(i).get("pid");
-            data[i][1] = projekt.get(i).get("projektnamn");
-            data[i][2] = projekt.get(i).get("beskrivning");
-            data[i][3] = projekt.get(i).get("startdatum");
-            data[i][4] = projekt.get(i).get("slutdatum");
-            data[i][5] = projekt.get(i).get("kostnad");
-            data[i][6] = projekt.get(i).get("status");
-            data[i][7] = projekt.get(i).get("prioritet");
-            data[i][8] = projekt.get(i).get("projektchef");
-            data[i][9] = projekt.get(i).get("namn");
+            for (int i = 0; i < projekt.size(); i++) {
+                data[i][0] = projekt.get(i).get("pid");
+                data[i][1] = projekt.get(i).get("projektnamn");
+                data[i][2] = projekt.get(i).get("beskrivning");
+                data[i][3] = projekt.get(i).get("startdatum");
+                data[i][4] = projekt.get(i).get("slutdatum");
+                data[i][5] = projekt.get(i).get("kostnad");
+                data[i][6] = projekt.get(i).get("status");
+                data[i][7] = projekt.get(i).get("prioritet");
+                data[i][8] = projekt.get(i).get("projektchef");
+                data[i][9] = projekt.get(i).get("namn");
+            }
+
+            tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) 
+                {
+                    return false;
+                }
+            });
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
         }
-
-        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }
-});
-
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
-}
+    }   
     
-    
-    
-    
-    
-    private void laddaProjektMedFilter(String status) {
-    try {
-        // Hämta avdelnings-id för inloggad användare
-        String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
-        String avdelningId = idb.fetchSingle(sqlAvd);
+    //Fyller tabell beroende på vilken status som projekten har på avdelningen
+    private void laddaProjektMedFilter(String status) 
+    {
+        try 
+        {
+            // Hämta avdelnings-id för inloggad användare
+            String sqlAvd = "SELECT avdelning FROM anstalld WHERE aid = " + aid;
+            String avdelningId = idb.fetchSingle(sqlAvd);
         
-        // Hämta projekt filtrerade på status
-        String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+            // Hämta projekt filtrerade på status
+            String sql = "SELECT DISTINCT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
                 + "p.kostnad, p.status, p.prioritet, "
                 + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
                 + "l.namn AS land "
@@ -144,57 +166,39 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
                 + "WHERE ans.avdelning = " + avdelningId
                 + " AND p.status = '" + status + "'";
 
-        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+            ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
 
-        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+            String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
             "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
 
-        String[][] data = new String[projekt.size()][10];
+            String[][] data = new String[projekt.size()][10];
 
-        for (int i = 0; i < projekt.size(); i++) {
-            data[i][0] = projekt.get(i).get("pid");
-            data[i][1] = projekt.get(i).get("projektnamn");
-            data[i][2] = projekt.get(i).get("beskrivning");
-            data[i][3] = projekt.get(i).get("startdatum");
-            data[i][4] = projekt.get(i).get("slutdatum");
-            data[i][5] = projekt.get(i).get("kostnad");
-            data[i][6] = projekt.get(i).get("status");
-            data[i][7] = projekt.get(i).get("prioritet");
-            data[i][8] = projekt.get(i).get("projektchef");
-            data[i][9] = projekt.get(i).get("namn");
+            for (int i = 0; i < projekt.size(); i++) {
+                data[i][0] = projekt.get(i).get("pid");
+                data[i][1] = projekt.get(i).get("projektnamn");
+                data[i][2] = projekt.get(i).get("beskrivning");
+                data[i][3] = projekt.get(i).get("startdatum");
+                data[i][4] = projekt.get(i).get("slutdatum");
+                data[i][5] = projekt.get(i).get("kostnad");
+                data[i][6] = projekt.get(i).get("status");
+                data[i][7] = projekt.get(i).get("prioritet");
+                data[i][8] = projekt.get(i).get("projektchef");
+                data[i][9] = projekt.get(i).get("namn");
+            }
+
+            tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) 
+                {
+                    return false; // Gör så att inga celler kan redigeras
+                }
+            });
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
         }
-
-        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false; // Gör så att inga celler kan redigeras
-    }
-    });
-
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
-}
-    
-    
-    public AvdelningensProjekt(InfDB idb, String aid) {
-    this.idb = idb;
-    this.aid = aid;
-    initComponents();
-    laddaProjekt();
-    // Fyll comboboxen med statusalternativ
-    cmbStatus.addItem("Alla");
-    cmbStatus.addItem("Pågående");
-    cmbStatus.addItem("Planerat");
-    cmbStatus.addItem("Avslutat");
-}
-    
-    
-    /**
-     * Creates new form AvdelningensProjekt
-     */
-    public AvdelningensProjekt() {
-        initComponents();
     }
 
     /**
@@ -230,8 +234,6 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
             }
         ));
         jScrollPane1.setViewportView(tblProjekt);
-
-        cmbStatus.addActionListener(this::cmbStatusActionPerformed);
 
         btnFiltrera.setText("Filtrera");
         btnFiltrera.addActionListener(this::btnFiltreraActionPerformed);
@@ -295,33 +297,36 @@ public class AvdelningensProjekt extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //När filtreraknappen trycks så körs kommando beroende på vald status
     private void btnFiltreraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltreraActionPerformed
         String valtStatus = cmbStatus.getSelectedItem().toString();
     
-    if(valtStatus.equals("Alla")){
-        laddaProjekt();
-    } else {
-        laddaProjektMedFilter(valtStatus);
-    }
+        if(valtStatus.equals("Alla"))
+        {
+            laddaProjekt();
+        }
+        else 
+        {
+            laddaProjektMedFilter(valtStatus);
+        }
     }//GEN-LAST:event_btnFiltreraActionPerformed
 
-    private void cmbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbStatusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbStatusActionPerformed
-
+    //När sökknapp trycks valideras texten som står och sokProjektPaDatum körs 
     private void btnSokDatumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSokDatumActionPerformed
         String datum = tfDatum.getText();
     
-    // Validera datumet
-    if (Validering.arGiltigtDatum(datum)) {
-        // Datumet är giltigt - rensa felmeddelande och sök
-        lblFelmeddelandeDatum.setText("");
-        sokProjektPaDatum(datum);
-    } else {
-        // Datumet är ogiltigt - visa felmeddelande
-        lblFelmeddelandeDatum.setText("Ogiltigt datum. Använd formatet YYYY-MM-DD.");
-    }
-
+        // Validera datumet
+        if (Validering.arGiltigtDatum(datum)) 
+        {
+            // Datumet är giltigt - rensa felmeddelande och sök
+            lblFelmeddelandeDatum.setText("");
+            sokProjektPaDatum(datum);
+        }
+        else 
+        {
+            // Datumet är ogiltigt - visa felmeddelande
+            lblFelmeddelandeDatum.setText("Ogiltigt datum. Använd formatet YYYY-MM-DD.");
+        }
     }//GEN-LAST:event_btnSokDatumActionPerformed
 
     /**
