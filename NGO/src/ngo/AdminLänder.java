@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 public class AdminLänder extends javax.swing.JFrame {
     private InfDB idb;
     private boolean arAdmin;
+    private ArrayList<String> bortagnaLid = new ArrayList<>();
 
     public AdminLänder(InfDB idb, boolean arAdmin) {
         this.idb = idb;
@@ -74,6 +75,7 @@ public class AdminLänder extends javax.swing.JFrame {
         tblLander = new javax.swing.JTable();
         btnSpara = new javax.swing.JButton();
         btnNyttLand = new javax.swing.JButton();
+        btnTaBort = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -96,17 +98,21 @@ public class AdminLänder extends javax.swing.JFrame {
         btnNyttLand.setText("Lägg till land");
         btnNyttLand.addActionListener(this::btnNyttLandActionPerformed);
 
+        btnTaBort.setText("Ta bort land");
+        btnTaBort.addActionListener(this::btnTaBortActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1527, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnTaBort)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNyttLand)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSpara)
-                .addGap(18, 18, 18))
+                .addComponent(btnSpara))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,7 +121,8 @@ public class AdminLänder extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSpara)
-                    .addComponent(btnNyttLand)))
+                    .addComponent(btnNyttLand)
+                    .addComponent(btnTaBort)))
         );
 
         pack();
@@ -139,6 +146,14 @@ if (tblLander.isEditing()) {
         int antalRader = model.getRowCount();
 
         try {
+            
+            // Först - radera länder som markerats för borttagning
+                for (String lid : bortagnaLid) {
+                String sqlTaBort = "DELETE FROM land WHERE lid = " + lid;
+                idb.delete(sqlTaBort);
+                }
+                bortagnaLid.clear();
+            
             for (int i = 0; i < antalRader; i++) {
                 
                 // Hämta alla fält från raden
@@ -187,12 +202,31 @@ if (tblLander.isEditing()) {
             System.out.println("Fel vid uppdatering av länder: " + ex.getMessage());
             javax.swing.JOptionPane.showMessageDialog(this, "Kunde inte spara. Kolla så att valutan skrivs med punkt (t.ex. 10.5).");        
     }//GEN-LAST:event_btnSparaActionPerformed
-
     }
+    private void btnTaBortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaBortActionPerformed
+        int valdRad = tblLander.getSelectedRow();
+    
+    if (valdRad == -1) {
+        JOptionPane.showMessageDialog(this, "Markera ett land att ta bort först.");
+        return;
+    }
+    
+    DefaultTableModel model = (DefaultTableModel) tblLander.getModel();
+    
+    // Spara lid i listan över borttagna - sparas i databasen vid spara
+    Object lidVarde = model.getValueAt(valdRad, 0);
+    if (lidVarde != null && !lidVarde.toString().isEmpty()) {
+        bortagnaLid.add(lidVarde.toString());
+    }
+    
+    model.removeRow(valdRad);
+    }//GEN-LAST:event_btnTaBortActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnNyttLand;
     private javax.swing.JButton btnSpara;
+    private javax.swing.JButton btnTaBort;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblLander;
     // End of variables declaration//GEN-END:variables

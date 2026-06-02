@@ -94,8 +94,8 @@ public static String genereraLosenord() {
  * @return true om telefonnumret är giltigt
  */
 public static boolean arGiltigtTelefon(String telefon) {
-    // Tillåt bara siffror och bindestreck, minst en siffra
-    String regex = "^[0-9-]+$";
+    // Tillåt siffror, bindestreck och plus-tecken (för landskod)
+    String regex = "^[0-9+-]+$";
     return Pattern.matches(regex, telefon);
 }
 

@@ -23,13 +23,14 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jScrollPane1" alignment="0" pref="1527" max="32767" attributes="0"/>
-          <Group type="102" alignment="1" attributes="0">
+          <Component id="jScrollPane1" pref="1527" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
+              <Component id="btnTaBort" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="btnNyttLand" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnSpara" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -41,6 +42,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnSpara" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnNyttLand" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnTaBort" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -127,6 +129,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNyttLandActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnTaBort">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Ta bort land"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTaBortActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
