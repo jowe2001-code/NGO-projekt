@@ -17,9 +17,19 @@ public class MinaProjekt extends javax.swing.JFrame {
     private String aid;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MinaProjekt.class.getName());
 
-    private void laddaProjekt() {
-    try {
-        String sql = "SELECT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
+    public MinaProjekt(InfDB idb, String aid) {
+        this.idb = idb;
+        this.aid = aid;
+        initComponents();
+        laddaProjekt();
+    }
+    
+    //Hämtar projekt som den inloggade individen är involverad i
+    private void laddaProjekt()
+    {
+        try 
+        {
+            String sql = "SELECT p.pid, p.projektnamn, p.beskrivning, p.startdatum, p.slutdatum, "
                 + "p.kostnad, p.status, p.prioritet, "
                 + "CONCAT(a.fornamn, ' ', a.efternamn) AS projektchef, "
                 + "l.namn AS land "
@@ -29,44 +39,38 @@ public class MinaProjekt extends javax.swing.JFrame {
                 + "JOIN land l ON p.land = l.lid "
                 + "WHERE ap.aid = " + aid;
 
-        ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
+            ArrayList<HashMap<String, String>> projekt = idb.fetchRows(sql);
 
-        String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
-            "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
+            String[] kolumner = {"ID", "Projektnamn", "Beskrivning", "Startdatum",
+                "Slutdatum", "Kostnad", "Status", "Prioritet", "Projektchef", "Land"};
 
-        String[][] data = new String[projekt.size()][10];
+            String[][] data = new String[projekt.size()][10];
 
-        for (int i = 0; i < projekt.size(); i++) {
-            data[i][0] = projekt.get(i).get("pid");
-            data[i][1] = projekt.get(i).get("projektnamn");
-            data[i][2] = projekt.get(i).get("beskrivning");
-            data[i][3] = projekt.get(i).get("startdatum");
-            data[i][4] = projekt.get(i).get("slutdatum");
-            data[i][5] = projekt.get(i).get("kostnad");
-            data[i][6] = projekt.get(i).get("status");
-            data[i][7] = projekt.get(i).get("prioritet");
-            data[i][8] = projekt.get(i).get("projektchef");
-            data[i][9] = projekt.get(i).get("namn");
+            for (int i = 0; i < projekt.size(); i++) {
+                data[i][0] = projekt.get(i).get("pid");
+                data[i][1] = projekt.get(i).get("projektnamn");
+                data[i][2] = projekt.get(i).get("beskrivning");
+                data[i][3] = projekt.get(i).get("startdatum");
+                data[i][4] = projekt.get(i).get("slutdatum");
+                data[i][5] = projekt.get(i).get("kostnad");
+                data[i][6] = projekt.get(i).get("status");
+                data[i][7] = projekt.get(i).get("prioritet");
+                data[i][8] = projekt.get(i).get("projektchef");
+                data[i][9] = projekt.get(i).get("namn");
+            }
+
+            tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) 
+            {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // Gör så att inga celler kan redigeras
+                }
+            });
+        } 
+        catch (InfException ex) 
+        {
+            System.out.println(ex.getMessage());
         }
-
-        tblProjekt.setModel(new javax.swing.table.DefaultTableModel(data, kolumner) {
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return false; // Gör så att inga celler kan redigeras
-    }
-});
-
-    } catch (InfException ex) {
-        System.out.println(ex.getMessage());
-    }
-}
-    
-    
-    public MinaProjekt(InfDB idb, String aid) {
-    this.idb = idb;
-    this.aid = aid;
-    initComponents();
-    laddaProjekt();
     }
 
     /**
