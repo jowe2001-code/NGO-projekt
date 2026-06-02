@@ -30,23 +30,28 @@ public class Meny extends javax.swing.JFrame {
         initComponents();
         lblInloggadAnvandare.setText(inloggadAnvandare);
         
-        try{
+        try
+        {
             //hämta aid från användare
             String sqlAid = "SELECT aid FROM anstalld WHERE epost = '" + inloggadAnvandare + "'";
             aid = idb.fetchSingle(sqlAid);
             
-            //kolla om användaren är admin
+            //kolla om användaren är admin eller projektledare
             String sqlAdmin = "SELECT aid FROM admin WHERE aid = " + aid;
             String behorighetsniva = idb.fetchSingle(sqlAdmin);
             String projektchef = "SELECT projektchef FROM projekt WHERE projektchef = " + aid;
             String projektledare = idb.fetchSingle(projektchef);
             
-            if(behorighetsniva != null){
+            //Beroende på om det är en handläggare, projektledare eller admin är inloggade visas rätt knappar
+            if(behorighetsniva != null)
+            {
                 lblRoll.setText("Administratör");
-                arAdmin = true;
-                
-            } else{
-                if (projektledare != null){
+                arAdmin = true;                
+            } 
+            else
+            {
+                if (projektledare != null)
+                {
                     lblRoll.setText("Handläggare & Projektledare");
                     btnAnställda.setVisible(false);
                     btnAvdelningar.setVisible(false);
@@ -54,7 +59,9 @@ public class Meny extends javax.swing.JFrame {
                     btnLänder.setVisible(false);
                     btnHanteraHållbarhetsmål.setVisible(false);
                     arProjektledare = true;
-                } else{
+                }
+                else
+                {
                     lblRoll.setText("Handläggare");
                     lblHantera.setVisible(false);
                     btnProjekt.setVisible(false);
@@ -63,10 +70,11 @@ public class Meny extends javax.swing.JFrame {
                     btnHanteraPartners.setVisible(false);
                     btnLänder.setVisible(false);
                     btnHanteraHållbarhetsmål.setVisible(false);
-                }
-            
+                }            
             }
-        }catch(InfException ex){
+        }
+        catch(InfException ex)
+        {
             System.out.println(ex.getMessage());
         }
     }
@@ -214,57 +222,48 @@ public class Meny extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Trycker på respektive knapp öppnar korrelerande fönster
     private void btnPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPartnersActionPerformed
-        // TODO add your handling code here:
         Partner partner = new Partner(idb, aid); 
         partner.setVisible(true);
     }//GEN-LAST:event_btnPartnersActionPerformed
 
     private void btnMinaProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinaProjektActionPerformed
-        // TODO add your handling code here:
         MinaProjekt minaProjekt = new MinaProjekt(idb, aid);
         minaProjekt.setVisible(true);
-
     }//GEN-LAST:event_btnMinaProjektActionPerformed
 
     private void btnHållbarhetsmålActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHållbarhetsmålActionPerformed
-        // TODO add your handling code here:
         Hållbarhetsmål mål = new Hållbarhetsmål(idb);
         mål.setVisible(true);
     }//GEN-LAST:event_btnHållbarhetsmålActionPerformed
 
     private void btnAvdelningensProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvdelningensProjektActionPerformed
-        // TODO add your handling code here:
         AvdelningensProjekt avdProjekt = new AvdelningensProjekt(idb, aid);
         avdProjekt.setVisible(true);
     }//GEN-LAST:event_btnAvdelningensProjektActionPerformed
 
     private void btnPersonalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPersonalActionPerformed
-        // TODO add your handling code here:
         Personal personal = new Personal(idb, aid);
         personal.setVisible(true);
     }//GEN-LAST:event_btnPersonalActionPerformed
 
     private void btnAndraUppgifterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAndraUppgifterActionPerformed
-        // TODO add your handling code here:
         ÄndraUppgifter uppgifter = new ÄndraUppgifter(idb, aid);
         uppgifter.setVisible(true);
     }//GEN-LAST:event_btnAndraUppgifterActionPerformed
 
     private void btnProjektActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjektActionPerformed
-        // TODO add your handling code here:
         AdminProjekt adminProjekt = new AdminProjekt(idb, arAdmin, arProjektledare, aid);
         adminProjekt.setVisible(true);
     }//GEN-LAST:event_btnProjektActionPerformed
 
     private void btnHanteraPartnersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHanteraPartnersActionPerformed
-        // TODO add your handling code here:
         AdminPartners adminPartners = new AdminPartners(idb, arAdmin);
         adminPartners.setVisible(true);
     }//GEN-LAST:event_btnHanteraPartnersActionPerformed
 
     private void btnLänderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLänderActionPerformed
-        // TODO add your handling code here:
         AdminLänder adminLänder = new AdminLänder(idb, arAdmin);
         adminLänder.setVisible(true);
     }//GEN-LAST:event_btnLänderActionPerformed
@@ -275,13 +274,11 @@ public class Meny extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAvdelningarActionPerformed
 
     private void btnAnställdaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnställdaActionPerformed
-        // TODO add your handling code here:
         AdminAnställda adminAnställda = new AdminAnställda(idb, arAdmin);
         adminAnställda.setVisible(true);
     }//GEN-LAST:event_btnAnställdaActionPerformed
 
     private void btnHanteraHållbarhetsmålActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHanteraHållbarhetsmålActionPerformed
-        // TODO add your handling code here:
         AdminHållbarhetsmål adminMål = new AdminHållbarhetsmål(idb, arAdmin);
         adminMål.setVisible(true);
     }//GEN-LAST:event_btnHanteraHållbarhetsmålActionPerformed
