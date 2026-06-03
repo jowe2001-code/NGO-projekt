@@ -161,8 +161,24 @@ public class AdminAnställda extends javax.swing.JFrame {
         try 
         {
             // Först - radera alla anställda som markerats för borttagning
-            for (String aid : bortagnaAid) 
-            {
+            for (String aid : bortagnaAid) {
+                // Ta bort kopplingar i andra tabeller först
+                // Ta bort kopplingar i ans_proj (anställd-projekt)
+                idb.delete("DELETE FROM ans_proj WHERE aid = " + aid);
+    
+                // Ta bort från admin om personen är admin
+                idb.delete("DELETE FROM admin WHERE aid = " + aid);
+                
+                // Ta bort från handlaggare om personen är handläggare
+                idb.delete("DELETE FROM handlaggare WHERE aid = " + aid);
+    
+                // Sätt projektchef till null på projekt där personen är chef
+                idb.update("UPDATE projekt SET projektchef = NULL WHERE projektchef = " + aid);
+    
+                // Sätt chef till null på avdelningar där personen är chef
+                idb.update("UPDATE avdelning SET chef = NULL WHERE chef = " + aid);
+    
+                //ta bort själva anställda
                 String sqlTaBort = "DELETE FROM anstalld WHERE aid = " + aid;
                 idb.delete(sqlTaBort);
             }
