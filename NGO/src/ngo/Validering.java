@@ -140,17 +140,33 @@ public class Validering {
         return Pattern.matches(regex, text);
     }
 
-    /**
-     * Kontrollerar att ett värde är ett giltigt tal (heltal eller decimaltal)
-    * @param text strängen som ska kontrolleras
-    * @return true om det är ett giltigt tal
-    */
-    public static boolean arGiltigtTal(String text) {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // Tillåt siffror och en punkt för decimaler
+    public static boolean arGiltigtTal(String text) {
     String regex = "^[0-9]+(\\.[0-9]+)?$";
     return Pattern.matches(regex, text);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
     * Kontrollerar att en sträng inte är tom
     * @param text strängen som ska kontrolleras
