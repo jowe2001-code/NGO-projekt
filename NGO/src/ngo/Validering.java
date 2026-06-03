@@ -138,5 +138,47 @@ public class Validering {
     {
         String regex = "^[0-9]+$";
         return Pattern.matches(regex, text);
-    }    
+    }
+
+    /**
+     * Kontrollerar att ett värde är ett giltigt tal (heltal eller decimaltal)
+    * @param text strängen som ska kontrolleras
+    * @return true om det är ett giltigt tal
+    */
+    public static boolean arGiltigtTal(String text) {
+    // Tillåt siffror och en punkt för decimaler
+    String regex = "^[0-9]+(\\.[0-9]+)?$";
+    return Pattern.matches(regex, text);
+    }
+
+    /**
+    * Kontrollerar att en sträng inte är tom
+    * @param text strängen som ska kontrolleras
+    * @return true om strängen inte är tom
+    */
+    public static boolean arIfylld(String text) {
+    return text != null && !text.trim().isEmpty();
+    }
+
+    /**
+    * Kontrollerar att status är ett giltigt värde
+    * @param status strängen som ska kontrolleras
+    * @return true om status är giltig
+    */
+    public static boolean arGiltigStatus(String status) {
+    return status.equals("Pågående") || status.equals("Planerat") || status.equals("Avslutat");
+    }
+
+    /**
+    * Kontrollerar att prioritet är ett giltigt värde
+    * @param prioritet strängen som ska kontrolleras
+    * @return true om prioritet är giltig
+    */
+    public static boolean arGiltigPrioritet(String prioritet) {
+    return prioritet.equals("Hög") || prioritet.equals("Medel") || prioritet.equals("Låg");
+    }
+
+
+
+    
 }

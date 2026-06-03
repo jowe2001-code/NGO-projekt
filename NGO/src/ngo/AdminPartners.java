@@ -198,7 +198,7 @@ public class AdminPartners extends javax.swing.JFrame {
                 String stadNamn = model.getValueAt(i, 7).toString();
 
                 // VALIDERING - namn får inte vara tomt
-                if (namn.isEmpty()) 
+                if (!Validering.arIfylld(namn)) 
                 {
                     javax.swing.JOptionPane.showMessageDialog(this,
                         "Fel i rad " + (i + 1) + ", kolumnen Namn. Namnet får inte vara tomt.");
@@ -224,7 +224,7 @@ public class AdminPartners extends javax.swing.JFrame {
                 }
 
                 // VALIDERING - stad får inte vara tom
-                if (stadNamn.isEmpty()) 
+                if (!Validering.arIfylld(stadNamn)) 
                 {
                     javax.swing.JOptionPane.showMessageDialog(this,
                         "Fel i rad " + (i + 1) + ", kolumnen Stad. Stad måste anges.");

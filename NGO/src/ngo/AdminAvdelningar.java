@@ -179,6 +179,29 @@ public class AdminAvdelningar extends javax.swing.JFrame {
                 String stad = model.getValueAt(i, 6).toString();
                 String chef = model.getValueAt(i, 7).toString();
 
+            // VALIDERING - namn får inte vara tomt
+            if (!Validering.arIfylld(namn)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                "Fel i rad " + (i + 1) + ", kolumnen Namn. Namnet får inte vara tomt.");
+                return;
+            }
+
+            // VALIDERING - stad måste vara en siffra
+            if (!Validering.arEnbartSiffror(stad)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                "Fel i rad " + (i + 1) + ", kolumnen Stad. "
+                + "Stad måste anges som ett ID-nummer.");
+                return;
+            }
+
+            // VALIDERING - chef måste vara en siffra
+            if (!Validering.arEnbartSiffror(chef)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                "Fel i rad " + (i + 1) + ", kolumnen Chef. "
+                 + "Chef måste anges som ett ID-nummer.");
+                 return;
+            }
+
                 // Om ID är tomt är det en NY avdelning
                 if (avdid.isEmpty()) 
                 {

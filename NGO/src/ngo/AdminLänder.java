@@ -178,6 +178,22 @@ public class AdminLänder extends javax.swing.JFrame {
                 String politisk = model.getValueAt(i, 5).toString();
                 String ekonomi = model.getValueAt(i, 6).toString();
 
+                // VALIDERING - namn får inte vara tomt
+                if (!Validering.arIfylld(namn)) {
+                    JOptionPane.showMessageDialog(this,
+                    "Fel i rad " + (i + 1) + ", kolumnen Namn. Namnet får inte vara tomt.");
+                    return;
+                }
+
+                // VALIDERING - valuta måste vara ett tal
+                if (!Validering.arGiltigtTal(valuta)) {
+                    JOptionPane.showMessageDialog(this,
+                    "Fel i rad " + (i + 1) + ", kolumnen Valuta. "
+                    + "Valutan måste vara ett tal (t.ex. 10.5).");
+                    return;
+                }
+                
+                
                 // om ID-fältet är tomt, betyder "Lägg till" kanppen har används
                 if(lid.isEmpty()) 
                 { 

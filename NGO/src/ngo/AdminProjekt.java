@@ -349,32 +349,29 @@ private void fyllTabell(boolean arAdmin, boolean arProjektledare)
                 }
             
                 // VALIDERING - projektnamn får inte vara tomt
-                if (projektnamn.isEmpty()) 
+                if (!Validering.arIfylld(projektnamn)) 
                 {
                     JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Projektnamn. " + "Projektnamnet får inte vara tomt.");
                     return;
                 }
 
-                   // VALIDERING - kostnad måste vara en siffra (kan ha decimaler)
-                try 
-                {
-                    Double.parseDouble(kostnad);
-                }
-                catch (NumberFormatException e) 
-                {
-                    JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Kostnad. " + "Kostnaden måste vara ett tal.");
+                // VALIDERING - kostnad måste vara en siffra (kan ha decimaler)
+                if (!Validering.arGiltigtTal(kostnad)) {
+                    JOptionPane.showMessageDialog(this,
+                    "Fel i rad " + (i + 1) + ", kolumnen Kostnad. "
+                    + "Kostnaden måste vara ett tal.");
                     return;
                 }
 
                 // VALIDERING - status måste vara giltigt
-                if (!status.equals("Pågående") && !status.equals("Planerat") && !status.equals("Avslutat")) 
+                if (!Validering.arGiltigStatus(status)) 
                 {
                     JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Status. " + "Status måste vara 'Pågående', 'Planerat' eller 'Avslutat'.");
                     return;
                 }
 
                 // VALIDERING - prioritet måste vara giltigt
-                if (!prioritet.equals("Hög") && !prioritet.equals("Medel") && !prioritet.equals("Låg")) 
+                if (!Validering.arGiltigPrioritet(prioritet)) 
                 {
                     JOptionPane.showMessageDialog(this, "Fel i rad " + (i + 1) + ", kolumnen Prioritet. " + "Prioritet måste vara 'Hög', 'Medel' eller 'Låg'.");
                     return;
